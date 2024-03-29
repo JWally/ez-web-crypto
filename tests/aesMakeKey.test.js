@@ -1,5 +1,5 @@
-import EZCrypto from "../index";
-const ezcrypto = new EZCrypto;
+import EZ_WEB_CRYPTO from "../index";
+const ezcrypto = new EZ_WEB_CRYPTO;
 
 test("AESMakeKey - NOT EXTRACTABLE", async () => {
     

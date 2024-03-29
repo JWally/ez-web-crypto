@@ -1,5 +1,5 @@
 declare module "@justinwwolcott/ez-web-crypto" {
-    export default class EZCrypto {
+    export default class EZ_WEB_CRYPTO {
       private nodeEnvLoad: () => Promise<void>;
       private sleep: (duration: number) => Promise<void>;
       constructor();

@@ -1,42 +1,90 @@
-```
-                           _                                 _        
-  ___ ____   __      _____| |__         ___ _ __ _   _ _ __ | |_ ___  
- / _ \_  /___\ \ /\ / / _ \ '_ \ _____ / __| '__| | | | '_ \| __/ _ \ 
-|  __// /_____\ V  V /  __/ |_) |_____| (__| |  | |_| | |_) | || (_) |
- \___/___|     \_/\_/ \___|_.__/       \___|_|   \__, | .__/ \__\___/ 
-                                                 |___/|_|             
+# EZ_WEB_CRYPTO
 
-...A Humble Attempt To Simplify WebCrypto
-```
+A JavaScript library providing an easy interface for working with subtle crypto.
 
-## Uses
+## Description
 
-The library (as an instantiated class) exposes the following methods - simplified, opinionated versions of the real thing. All Async.:
+`EZ_WEB_CRYPTO` is a class designed to simplify interactions with the Web Crypto API. It offers a straightforward approach to performing common cryptographic operations such as encoding, decoding, encryption, and decryption in both browser and Node.js environments.
 
-- `HMAC (secret, data)`
-- `HASH (algorithm, data, length)`
-- `AESMakeKey (exportable = true)`
-- `AESImportKey (aes_key, exportable = true)`
-- `AESEncrypt (aes_key, base_64_data, base_64_nonce = false)`
-- `AESDecrypt (aes_key, base_64_nonce, base_64_cipher, returnText = false)`
-- `EcMakeCryptKeys (exportable = true)`
-- `EcEncrypt (privateKey, publicKey, b64data)`
-- `EcDecrypt (privateKey, publicKey, b64Nonce, b64data)`
-- `HKDFEncrypt (ecPrivateKey, ecPublicKey, b64data)`
-- `HKDFDecrypt (ecPrivate, ecPublic, b64Salt, b64iv, b64data)`
-- `EcMakeSigKeys (exportable = true)`
-- `EcSignData (PrivateKey, b64data)`
-- `EcVerifySig (PublicKey, b64Signature, b64data)`
-- `EcdhConvertKey (unknown_key)`
-- `EcdsaConvertKey (unknown_key)`
+## Features
 
+- Automatic environment detection (Browser/Node.js)
+- Base64 and Uint8Array conversions
+- HMAC generation
+- Data hashing with SHA algorithms
+- Password-based encryption and decryption
+- AES key generation, encryption, and decryption
+- Elliptic Curve Cryptography (ECC) for key generation, encryption, decryption, and digital signature operations
+- HKDF for key derivation and encryption/decryption operations
 
 ## Installation
 
-Don't currently have an NPM repo set up (todo: set up NPM repo for this), but the library can be included as a dependency by adding it in your `package.json` file and running `npm install --save`.
+To use `EZ_WEB_CRYPTO` in your project, simply import it:
 
-```json
-  "dependencies": {
-    "ezcrypto": "github:Keyri-Co/EZCrypto",
-  },
+```javascript
+import EZ_WEB_CRYPTO from 'ez-web-crypto';
 ```
+
+## Usage
+
+### Initialization
+
+```javascript
+const ezWebCrypto = new EZ_WEB_CRYPTO();
+```
+
+### Conversions
+
+- Base64 to Uint8Array: `ezWebCrypto.base64ToArray(base64String)`
+- Uint8Array to Base64: `ezWebCrypto.arrayToBase64(arrayBuffer)`
+
+### HMAC Generation
+
+```javascript
+const hmac = await ezWebCrypto.HMAC(secret, data);
+```
+
+### Data Hashing
+
+```javascript
+const hash = await ezWebCrypto.HASH(algo, data, len);
+```
+
+### Password-based Encryption and Decryption
+
+- Encrypt: `ezWebCrypto.PASSWORD_ENCRYPT(password, data)`
+- Decrypt: `ezWebCrypto.PASSWORD_DECRYPT(password, encryptedData)`
+
+### AES Operations
+
+- Key Generation: `ezWebCrypto.AESMakeKey(exportable)`
+- Key Import: `ezWebCrypto.AESImportKey(key, exportable)`
+- Encryption: `ezWebCrypto.AESEncrypt(key, data, nonce)`
+- Decryption: `ezWebCrypto.AESDecrypt(key, nonce, data, returnText)`
+
+### ECC Operations
+
+- Key Generation: `ezWebCrypto.EcMakeCryptKeys(exportable)`
+- Encryption: `ezWebCrypto.EcEncrypt(privateKey, publicKey, data)`
+- Decryption: `ezWebCrypto.EcDecrypt(privateKey, publicKey, nonce, data, returnText)`
+- Signature Generation: `ezWebCrypto.EcMakeSigKeys(exportable)`
+- Data Signing: `ezWebCrypto.EcSignData(privateKey, data)`
+- Signature Verification: `ezWebCrypto.EcVerifySig(publicKey, signature, data)`
+
+### HKDF Operations
+
+- Encryption: `ezWebCrypto.HKDFEncrypt(privateKey, publicKey, data)`
+- Decryption: `ezWebCrypto.HKDFDecrypt(privateKey, publicKey, salt, iv, data, returnText)`
+
+### Key Conversion Utilities
+
+- `ezWebCrypto.EcdhConvertKey(key)`
+- `ezWebCrypto.EcdsaConvertKey(key)`
+
+## Contributions
+
+Contributions are welcome. Please ensure that your code adheres to the existing coding standards.
+
+## License
+
+MIT

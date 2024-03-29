@@ -6,40 +6,28 @@
 // easier and more obvious
 //
 
-export default class EZCrypto {
-  
-  
+export default class EZ_WEB_CRYPTO {
+
   constructor() {
+    this._initializeCrypto();
+  }
 
-    this._crypto = undefined;
-
-    if(typeof window == "undefined" && typeof self == "undefined"){
-      this._nodeEnvLoad();
+  async _initializeCrypto() {
+    if (typeof globalThis.crypto !== 'undefined') {
+      this._crypto = globalThis.crypto;
+      this._crypto.CryptoKey = globalThis.CryptoKey || null;
+    } else if (typeof globalThis.require === 'function') {
+      // Node.js environment
+      const { webcrypto } = await import('crypto');
+      this._crypto = webcrypto;
+      this._crypto.CryptoKey = null; // Node.js does not have a CryptoKey global
     } else {
-      try{
-        this._crypto = window?.crypto;
-        this._crypto.CryptoKey = window?.CryptoKey;
-      } catch(e){
-        this._crypto = self?.crypto;
-        this._crypto.CryptoKey = self?.CryptoKey;
-      }
-    } 
+      throw new Error('Crypto API is not available in this environment');
+    }
   }
 
-  // //////////////////////////////////////////////////////////////////////////
-  // //////////////////////////////////////////////////////////////////////////
-  _nodeEnvLoad = async () => {
-    this._crypto =  await Object.getPrototypeOf(async function(){}).constructor(
-`
-      return await import( "crypto" ).then((m) => {return m.default.webcrypto});
-`
-    )();  
-  }
-
-  // //////////////////////////////////////////////////////////////////////////
-  // //////////////////////////////////////////////////////////////////////////
-  _sleep = async (duration) => {
-    await new Promise((s,j) => {setTimeout(() => {return s(true)},duration)});
+  async _sleep(duration) {
+    await new Promise(resolve => setTimeout(resolve, duration));
   }
 
   // //////////////////////////////////////////////////////////////////////////
