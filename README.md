@@ -1,4 +1,4 @@
-# EZ_WEB_CRYPTO
+![image](https://github.com/JWally/ez-web-crypto/assets/2482935/0e2faf24-2c5e-416f-b9e3-e75fe2080569)
 
 A JavaScript library providing an easy interface for working with subtle crypto.
 
