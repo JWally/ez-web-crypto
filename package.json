@@ -67,5 +67,8 @@
   },
   "engines": {
     "node": ">=14.0.0"
+  },
+  "dependencies": {
+    "np": "^10.0.7"
   }
 }
