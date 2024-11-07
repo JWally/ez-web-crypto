@@ -22,7 +22,7 @@ A JavaScript library providing an easy interface for working with subtle crypto.
 To use `EZ_WEB_CRYPTO` in your project, simply import it:
 
 ```javascript
-import EZ_WEB_CRYPTO from 'ez-web-crypto';
+import EZ_WEB_CRYPTO from 'ez-web-crypto'
 ```
 
 ## Usage
@@ -30,7 +30,7 @@ import EZ_WEB_CRYPTO from 'ez-web-crypto';
 ### Initialization
 
 ```javascript
-const ezWebCrypto = new EZ_WEB_CRYPTO();
+const ezWebCrypto = new EZ_WEB_CRYPTO()
 ```
 
 ### Conversions
@@ -41,13 +41,13 @@ const ezWebCrypto = new EZ_WEB_CRYPTO();
 ### HMAC Generation
 
 ```javascript
-const hmac = await ezWebCrypto.HMAC(secret, data);
+const hmac = await ezWebCrypto.HMAC(secret, data)
 ```
 
 ### Data Hashing
 
 ```javascript
-const hash = await ezWebCrypto.HASH(algo, data, len);
+const hash = await ezWebCrypto.HASH(algo, data, len)
 ```
 
 ### Password-based Encryption and Decryption

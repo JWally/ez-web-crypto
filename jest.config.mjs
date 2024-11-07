@@ -7,8 +7,6 @@ export default {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
-  transformIgnorePatterns: [
-    '/node_modules/(?!(your-package-name)/)',
-  ],
+  transformIgnorePatterns: ['/node_modules/(?!(your-package-name)/)'],
   testEnvironment: 'node',
-};
+}

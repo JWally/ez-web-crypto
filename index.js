@@ -7,27 +7,26 @@
 //
 
 export default class EZ_WEB_CRYPTO {
-
   constructor() {
-    this._initializeCrypto();
+    this._initializeCrypto()
   }
 
   async _initializeCrypto() {
     if (typeof globalThis.crypto !== 'undefined') {
-      this._crypto = globalThis.crypto;
-      this._crypto.CryptoKey = globalThis.CryptoKey || null;
+      this._crypto = globalThis.crypto
+      this._crypto.CryptoKey = globalThis.CryptoKey || null
     } else if (typeof globalThis.require === 'function') {
       // Node.js environment
-      const { webcrypto } = await import('crypto');
-      this._crypto = webcrypto;
-      this._crypto.CryptoKey = null; // Node.js does not have a CryptoKey global
+      const { webcrypto } = await import('crypto')
+      this._crypto = webcrypto
+      this._crypto.CryptoKey = null // Node.js does not have a CryptoKey global
     } else {
-      throw new Error('Crypto API is not available in this environment');
+      throw new Error('Crypto API is not available in this environment')
     }
   }
 
   async _sleep(duration) {
-    await new Promise(resolve => setTimeout(resolve, duration));
+    await new Promise((resolve) => setTimeout(resolve, duration))
   }
 
   // //////////////////////////////////////////////////////////////////////////
@@ -45,7 +44,7 @@ export default class EZ_WEB_CRYPTO {
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
   base64ToArray(strng) {
-    return Uint8Array.from(atob(strng), (c) => c.charCodeAt(0));
+    return Uint8Array.from(atob(strng), (c) => c.charCodeAt(0))
   }
 
   // //////////////////////////////////////////////////////////////////////////
@@ -64,18 +63,18 @@ export default class EZ_WEB_CRYPTO {
 
   arrayToBase64(utf8Bytes) {
     // Split the bytes into smaller chunks to avoid call stack issues
-    const chunkSize = 8192;
-    const chunks = [];
+    const chunkSize = 8192
+    const chunks = []
 
     for (let i = 0; i < utf8Bytes.length; i += chunkSize) {
-      const chunk = utf8Bytes.subarray(i, i + chunkSize);
-      chunks.push(String.fromCharCode.apply(null, chunk));
+      const chunk = utf8Bytes.subarray(i, i + chunkSize)
+      chunks.push(String.fromCharCode.apply(null, chunk))
     }
 
     // Convert the bytes to a base64 string
-    const base64 = btoa(chunks.join(''));
+    const base64 = btoa(chunks.join(''))
 
-    return base64;
+    return base64
   }
 
   // //////////////////////////////////////////////////////////////////////////
@@ -96,44 +95,41 @@ export default class EZ_WEB_CRYPTO {
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
   HMAC = async (secret, data) => {
-    await this._sleep(0);
+    await this._sleep(0)
 
     // To do work, we need to convert text to Uint8Arrays
-    let encoder = new TextEncoder("utf-8");
-    let encodedSecret = encoder.encode(secret);
-    let encodedData = encoder.encode(data);
+    let encoder = new TextEncoder('utf-8')
+    let encodedSecret = encoder.encode(secret)
+    let encodedData = encoder.encode(data)
 
     // Create our HMAC Key
     let key = await this._crypto.subtle.importKey(
-      "raw",
+      'raw',
       encodedSecret,
-      { name: "HMAC", hash: { name: "SHA-256" } },
+      { name: 'HMAC', hash: { name: 'SHA-256' } },
       false,
-      ["sign", "verify"]
-    );
+      ['sign', 'verify']
+    )
 
     // HMAC Sign our data with our HMAC Key
-    let sig = await this._crypto.subtle.sign("HMAC", key, encodedData);
+    let sig = await this._crypto.subtle.sign('HMAC', key, encodedData)
 
     // Turn the signature into an array; then into hex-text
     // (todo: Maybe this is its own method...?)
     //
-    let b = new Uint8Array(sig);
-    let str = Array.prototype.map
-      .call(b, (x) => ("00" + x.toString(16)).slice(-2))
-      .join("");
+    let b = new Uint8Array(sig)
+    let str = Array.prototype.map.call(b, (x) => ('00' + x.toString(16)).slice(-2)).join('')
 
-    return str;
+    return str
   }
-
 
   // //////////////////////////////////////////////////////////////////////////
   // //////////////////////////////////////////////////////////////////////////
   //
   // Function:     HASH (static) (async)
-  // What is this: The digest() method of the SubtleCrypto interface generates a digest of the given data. 
+  // What is this: The digest() method of the SubtleCrypto interface generates a digest of the given data.
   //               A digest is a short fixed-length value derived from some variable-length input.
-  //               Cryptographic digests should exhibit collision-resistance, meaning that it's hard to come up 
+  //               Cryptographic digests should exhibit collision-resistance, meaning that it's hard to come up
   //               with two different inputs that have the same digest value.
   //
   // Arguments:    algo - this is the string you're hashing for
@@ -144,34 +140,30 @@ export default class EZ_WEB_CRYPTO {
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
   HASH = async (algo, data, len) => {
+    await this._sleep(0)
 
-    await this._sleep(0);
+    let hash = await this._crypto.subtle.digest(algo, new TextEncoder().encode(data))
 
-    let hash = await this._crypto.subtle.digest(algo, new TextEncoder().encode(data));
-    
-    let ary = new Uint8Array(hash);
+    let ary = new Uint8Array(hash)
 
-    let outAry;
+    let outAry
 
-    if(len){
+    if (len) {
       // initialize outAry to the desired size
-      outAry = new Uint8Array(len,0);
+      outAry = new Uint8Array(len, 0)
 
-      let min = Math.min(len, ary.length);
-      let max = Math.max(len, ary.length);
+      let min = Math.min(len, ary.length)
+      let max = Math.max(len, ary.length)
 
-      for(var i = 0; i < max; i++){
-        outAry[i%len] = outAry[i%len] ^ ary[i%ary.length];
+      for (var i = 0; i < max; i++) {
+        outAry[i % len] = outAry[i % len] ^ ary[i % ary.length]
       }
     } else {
-      outAry = ary;
+      outAry = ary
     }
 
-    return this.arrayToBase64(new Uint8Array(outAry));
-
+    return this.arrayToBase64(new Uint8Array(outAry))
   }
-
-
 
   // //////////////////////////////////////////////////////////////////////////
   // //////////////////////////////////////////////////////////////////////////
@@ -179,7 +171,7 @@ export default class EZ_WEB_CRYPTO {
   //
   // Function:     PASSWORD_ENCRYPT
   // What is this: Dead simple method to encrypt a piece of data with a password
-  //               that can later be decrypted needing only that password 
+  //               that can later be decrypted needing only that password
   //
   // Arguments:    password: string; plaintext string of user's password
   //               base64data: string; what you want to encrypt
@@ -191,24 +183,21 @@ export default class EZ_WEB_CRYPTO {
   //
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-  PASSWORD_ENCRYPT = async(password, base64data) => {
+  PASSWORD_ENCRYPT = async (password, base64data) => {
+    await this._sleep(0)
 
-      await this._sleep(0);
+    for (let i = 0; i < 10; i++) {
+      password = await this.HASH('SHA-512', password)
+    }
 
-      for(let i = 0; i < 10; i++){
-        password = await this.HASH("SHA-512", password);
-      }
-      
-      let passwordHash = btoa(password);
-    
-      let aes = await this.AESMakeKey(true);
+    let passwordHash = btoa(password)
 
-      let output = await this.AESEncrypt(aes, base64data, passwordHash);
+    let aes = await this.AESMakeKey(true)
 
-      return btoa(JSON.stringify({ciphertext: output.ciphertext, aes}));
+    let output = await this.AESEncrypt(aes, base64data, passwordHash)
+
+    return btoa(JSON.stringify({ ciphertext: output.ciphertext, aes }))
   }
-
-
 
   // //////////////////////////////////////////////////////////////////////////
   // //////////////////////////////////////////////////////////////////////////
@@ -229,33 +218,25 @@ export default class EZ_WEB_CRYPTO {
   //
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-  PASSWORD_DECRYPT = async(password, base64data) => {
+  PASSWORD_DECRYPT = async (password, base64data) => {
+    await this._sleep(0)
 
-    await this._sleep(0);
-
-    for(let i = 0; i < 10; i++){
-      password = await this.HASH("SHA-512", password);
+    for (let i = 0; i < 10; i++) {
+      password = await this.HASH('SHA-512', password)
     }
-      
-    let passwordHash = btoa(password);
 
-    let encryptedDataObject = JSON.parse(atob(base64data));
-  
-    let aes = await this.AESImportKey(encryptedDataObject.aes,false);
+    let passwordHash = btoa(password)
 
-    let ciphertext = encryptedDataObject.ciphertext;
+    let encryptedDataObject = JSON.parse(atob(base64data))
 
-    let plaintext = await this.AESDecrypt(aes, passwordHash, ciphertext, true);
+    let aes = await this.AESImportKey(encryptedDataObject.aes, false)
 
-    return plaintext;
-}
+    let ciphertext = encryptedDataObject.ciphertext
 
+    let plaintext = await this.AESDecrypt(aes, passwordHash, ciphertext, true)
 
-
-
-
-
-
+    return plaintext
+  }
 
   // //////////////////////////////////////////////////////////////////////////
   // //////////////////////////////////////////////////////////////////////////
@@ -272,30 +253,27 @@ export default class EZ_WEB_CRYPTO {
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
   AESMakeKey = async (exportable = true) => {
-    await this._sleep(0);
+    await this._sleep(0)
 
     // 1.) Generate the Key
-    let key = await this._crypto.subtle.generateKey(
-      { name: "AES-GCM", length: 256 },
-      exportable,
-      ["encrypt", "decrypt"]
-    );
+    let key = await this._crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, exportable, [
+      'encrypt',
+      'decrypt',
+    ])
 
-
-    // 2.) 
-    if(exportable){
+    // 2.)
+    if (exportable) {
       //Return it as b64 if its exportable
-      
-      let out = await this._crypto.subtle.exportKey("raw", key);
-      return this.arrayToBase64(new Uint8Array(out));
+
+      let out = await this._crypto.subtle.exportKey('raw', key)
+      return this.arrayToBase64(new Uint8Array(out))
     } else {
       // else return the CryptoKey Object
-      
-      return key;
+
+      return key
     }
-  };
-  
-  
+  }
+
   // //////////////////////////////////////////////////////////////////////////
   // //////////////////////////////////////////////////////////////////////////
   //
@@ -311,23 +289,18 @@ export default class EZ_WEB_CRYPTO {
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
   AESImportKey = async (aes_key, exportable = true) => {
-    await this._sleep(0);
+    await this._sleep(0)
 
-
-    if(aes_key instanceof this._crypto.CryptoKey){
-      return aes_key;
+    if (aes_key instanceof this._crypto.CryptoKey) {
+      return aes_key
     } else {
-
       // 1.) Generate the Key
-      return await this._crypto.subtle.importKey(
-          "raw",
-          this.base64ToArray(aes_key).buffer,
-          "AES-GCM",
-          exportable,
-          ["encrypt", "decrypt"]
-        );
+      return await this._crypto.subtle.importKey('raw', this.base64ToArray(aes_key).buffer, 'AES-GCM', exportable, [
+        'encrypt',
+        'decrypt',
+      ])
     }
-  };
+  }
 
   // //////////////////////////////////////////////////////////////////////////
   // //////////////////////////////////////////////////////////////////////////
@@ -345,33 +318,32 @@ export default class EZ_WEB_CRYPTO {
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
   async AESEncrypt(base_64_key, base_64_data, base_64_nonce = false) {
-    await this._sleep(0);
-    
-    // 0.) Pass Key to 
-    let aes_key = await this.AESImportKey(base_64_key);
+    await this._sleep(0)
 
+    // 0.) Pass Key to
+    let aes_key = await this.AESImportKey(base_64_key)
 
     // 3.) Create a nonce why not?
-    let nonce;
-    
-    if(base_64_nonce){
-      nonce = this.base64ToArray(base_64_nonce);
+    let nonce
+
+    if (base_64_nonce) {
+      nonce = this.base64ToArray(base_64_nonce)
     } else {
-      nonce = this._crypto.getRandomValues(new Uint8Array(16));
+      nonce = this._crypto.getRandomValues(new Uint8Array(16))
     }
 
     // 4.) encrypt our data
     let encrypted = await this._crypto.subtle.encrypt(
-      { name: "AES-GCM", iv: nonce },
+      { name: 'AES-GCM', iv: nonce },
       aes_key,
       this.base64ToArray(base_64_data)
-    );
+    )
 
     // 5.) Base64 and return our data...
     return {
       ciphertext: this.arrayToBase64(new Uint8Array(encrypted)),
       iv: this.arrayToBase64(nonce),
-    };
+    }
   }
 
   // //////////////////////////////////////////////////////////////////////////
@@ -391,31 +363,25 @@ export default class EZ_WEB_CRYPTO {
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
   async AESDecrypt(base_64_key, base_64_nonce, base_64_cipher, returnText = false) {
-    await this._sleep(0);
+    await this._sleep(0)
 
     // 1.) Convert out from base64 to array
-    let aes_key = await this.AESImportKey(base_64_key);
-    let nonce_ary = this.base64ToArray(base_64_nonce);
-    let cipher_ary = this.base64ToArray(base_64_cipher);
-    let decrypted;
-
-
+    let aes_key = await this.AESImportKey(base_64_key)
+    let nonce_ary = this.base64ToArray(base_64_nonce)
+    let cipher_ary = this.base64ToArray(base_64_cipher)
+    let decrypted
 
     // 3.) Decrypt
-    decrypted = await this._crypto.subtle.decrypt(
-      { name: "AES-GCM", iv: nonce_ary },
-      aes_key,
-      cipher_ary
-    );
+    decrypted = await this._crypto.subtle.decrypt({ name: 'AES-GCM', iv: nonce_ary }, aes_key, cipher_ary)
 
-    if(!returnText){
-      return decrypted;
+    if (!returnText) {
+      return decrypted
     } else {
-      decrypted = new Uint8Array(decrypted);
+      decrypted = new Uint8Array(decrypted)
 
-      decrypted = new TextDecoder().decode(decrypted);
+      decrypted = new TextDecoder().decode(decrypted)
 
-      return decrypted;
+      return decrypted
     }
   }
 
@@ -434,79 +400,79 @@ export default class EZ_WEB_CRYPTO {
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
   EcMakeCryptKeys = async (exportable = true) => {
-    await this._sleep(0);
+    await this._sleep(0)
 
     // Step 1) Create ECDH KeyS
-    let keys = await this._crypto.subtle.generateKey(
-      { name: "ECDH", namedCurve: "P-256" },
-      exportable,
-      ["deriveKey","deriveBits"]
-    );
+    let keys = await this._crypto.subtle.generateKey({ name: 'ECDH', namedCurve: 'P-256' }, exportable, [
+      'deriveKey',
+      'deriveBits',
+    ])
 
     // Step 2) Export keys to SPKI|PKCS8|JWK|RAW format
-    let exportKeys;
+    let exportKeys
 
-    if(exportable){
+    if (exportable) {
       exportKeys = await Promise.all([
-          this._crypto.subtle.exportKey("spki", keys.publicKey).then((key) => {
-            return this.arrayToBase64(new Uint8Array(key));
-          }),
-          this._crypto.subtle.exportKey("pkcs8", keys.privateKey).then((key) => {
-            return this.arrayToBase64(new Uint8Array(key));
-          }),
-          this._crypto.subtle.exportKey("jwk", keys.publicKey).then((key) => {
-            return (key);
-          }),
-          this._crypto.subtle.exportKey("jwk", keys.privateKey).then((key) => {
-            return (key);
-          }),
-          this._crypto.subtle.exportKey("raw", keys.publicKey).then((key) => {
-            return this.arrayToBase64( new Uint8Array(key));
-          }),
-          this._crypto.subtle.exportKey("raw", keys.publicKey).then((key) => {
-            return this.arrayToBase64( new Uint8Array(key).slice(1,1000));
-          })
-      ]);
-      
+        this._crypto.subtle.exportKey('spki', keys.publicKey).then((key) => {
+          return this.arrayToBase64(new Uint8Array(key))
+        }),
+        this._crypto.subtle.exportKey('pkcs8', keys.privateKey).then((key) => {
+          return this.arrayToBase64(new Uint8Array(key))
+        }),
+        this._crypto.subtle.exportKey('jwk', keys.publicKey).then((key) => {
+          return key
+        }),
+        this._crypto.subtle.exportKey('jwk', keys.privateKey).then((key) => {
+          return key
+        }),
+        this._crypto.subtle.exportKey('raw', keys.publicKey).then((key) => {
+          return this.arrayToBase64(new Uint8Array(key))
+        }),
+        this._crypto.subtle.exportKey('raw', keys.publicKey).then((key) => {
+          return this.arrayToBase64(new Uint8Array(key).slice(1, 1000))
+        }),
+      ])
     } else {
       exportKeys = await Promise.all([
         //
-          this._crypto.subtle.exportKey("spki", keys.publicKey).then((key) => {
-            return this.arrayToBase64(new Uint8Array(key));
-          }),
+        this._crypto.subtle.exportKey('spki', keys.publicKey).then((key) => {
+          return this.arrayToBase64(new Uint8Array(key))
+        }),
         //
-        (new Promise((s,j) => {return s(keys.privateKey)})),
+        new Promise((s, j) => {
+          return s(keys.privateKey)
+        }),
         //
-          this._crypto.subtle.exportKey("raw", keys.publicKey).then((key) => {
-            return this.arrayToBase64( new Uint8Array(key));
-          }),
+        this._crypto.subtle.exportKey('raw', keys.publicKey).then((key) => {
+          return this.arrayToBase64(new Uint8Array(key))
+        }),
         //
-          this._crypto.subtle.exportKey("raw", keys.publicKey).then((key) => {
-            return this.arrayToBase64( new Uint8Array(key).slice(1,1000));
-          })
-      ]);
+        this._crypto.subtle.exportKey('raw', keys.publicKey).then((key) => {
+          return this.arrayToBase64(new Uint8Array(key).slice(1, 1000))
+        }),
+      ])
     }
 
-    if(exportable){
-      return { 
-        publicKey: exportKeys[0], 
-        privateKey: exportKeys[1], 
-        jwkPublicKey: exportKeys[2], 
-        jwkPrivateKey: exportKeys[3], 
+    if (exportable) {
+      return {
+        publicKey: exportKeys[0],
+        privateKey: exportKeys[1],
+        jwkPublicKey: exportKeys[2],
+        jwkPrivateKey: exportKeys[3],
         rawPublicKey: exportKeys[4],
-        rawPublicKeyLite: exportKeys[5]
-      };
+        rawPublicKeyLite: exportKeys[5],
+      }
     } else {
-        return { 
-          publicKey: exportKeys[0], 
-          privateKey: exportKeys[1], 
-          rawPublicKey: exportKeys[2], 
-          rawPublicKeyLite: exportKeys[3]
-        };
+      return {
+        publicKey: exportKeys[0],
+        privateKey: exportKeys[1],
+        rawPublicKey: exportKeys[2],
+        rawPublicKeyLite: exportKeys[3],
+      }
     }
 
     // Step 3) Convert the keys to base64 and return...
-  };
+  }
 
   // //////////////////////////////////////////////////////////////////////////
   // //////////////////////////////////////////////////////////////////////////
@@ -532,26 +498,25 @@ export default class EZ_WEB_CRYPTO {
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
   EcEncrypt = async (b64Private, b64Public, b64data) => {
-    await this._sleep(0);
+    await this._sleep(0)
 
     // 1.) convert the given keys to real keys in the most
     //     generic way possible...
-    let publicKey = await this.EcdhConvertKey(b64Public);
-    let privateKey = await this.EcdhConvertKey(b64Private);
-    
+    let publicKey = await this.EcdhConvertKey(b64Public)
+    let privateKey = await this.EcdhConvertKey(b64Private)
+
     // 2.) generate shared key
     let aes_key = await this._crypto.subtle.deriveKey(
-      { name: "ECDH", public: publicKey },
+      { name: 'ECDH', public: publicKey },
       privateKey,
-      { name: "AES-GCM", length: 256 },
+      { name: 'AES-GCM', length: 256 },
       false,
-      ["encrypt", "decrypt"]
+      ['encrypt', 'decrypt']
     )
-    
+
     // 3.) Work smarter, not harder, dummy...
-    return await this.AESEncrypt(aes_key, b64data);
-  
-  };
+    return await this.AESEncrypt(aes_key, b64data)
+  }
 
   // //////////////////////////////////////////////////////////////////////////
   // //////////////////////////////////////////////////////////////////////////
@@ -578,58 +543,34 @@ export default class EZ_WEB_CRYPTO {
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
   EcDecrypt = async (b64Private, b64Public, b64Nonce, b64data, returnText = false) => {
-
     // 1.) convert the given keys to real keys in the most
     //     generic way possible...
-    let publicKey = await this.EcdhConvertKey(b64Public);
-    let privateKey = await this.EcdhConvertKey(b64Private);
-    let nonce = this.base64ToArray(b64Nonce);
-    let data = this.base64ToArray(b64data);
-    let decrypted;
+    let publicKey = await this.EcdhConvertKey(b64Public)
+    let privateKey = await this.EcdhConvertKey(b64Private)
+    let nonce = this.base64ToArray(b64Nonce)
+    let data = this.base64ToArray(b64data)
+    let decrypted
 
     // 2.) generate shared key
     let aes_key = await this._crypto.subtle.deriveKey(
-      { name: "ECDH", public: publicKey },
+      { name: 'ECDH', public: publicKey },
       privateKey,
-      { name: "AES-GCM", length: 256 },
+      { name: 'AES-GCM', length: 256 },
       false,
-      ["encrypt", "decrypt"]
-    );
+      ['encrypt', 'decrypt']
+    )
 
     // 3..) decrypt our data
-    const decryptedData = await this._crypto.subtle.decrypt(
-      { name: "AES-GCM", iv: nonce },
-      aes_key,
-      data
-    );
+    const decryptedData = await this._crypto.subtle.decrypt({ name: 'AES-GCM', iv: nonce }, aes_key, data)
 
-    if(!returnText){
-      return decryptedData;
+    if (!returnText) {
+      return decryptedData
     } else {
-      decrypted = new Uint8Array(decryptedData);
-      decrypted = new TextDecoder().decode(decrypted);
-      return decrypted;
+      decrypted = new Uint8Array(decryptedData)
+      decrypted = new TextDecoder().decode(decrypted)
+      return decrypted
     }
-  };
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  }
 
   // //////////////////////////////////////////////////////////////////////////
   // //////////////////////////////////////////////////////////////////////////
@@ -655,80 +596,73 @@ export default class EZ_WEB_CRYPTO {
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
   HKDFEncrypt = async (b64Private, b64Public, b64data) => {
-    await this._sleep(0);
+    await this._sleep(0)
 
     // 1.) convert the given keys to real keys in the most
     //     generic way possible...
-    let publicKey = await this.EcdhConvertKey(b64Public);
-    let privateKey = await this.EcdhConvertKey(b64Private);
-    
+    let publicKey = await this.EcdhConvertKey(b64Public)
+    let privateKey = await this.EcdhConvertKey(b64Private)
+
     // 2.) generate shared secret for HKDF
     //
-    let sharedSecret = await this._crypto.subtle.deriveBits({ 
-      "name": "ECDH", 
-      "namedCurve": "P-256", 
-      "public": publicKey 
-    },privateKey,256);
-    
+    let sharedSecret = await this._crypto.subtle.deriveBits(
+      {
+        name: 'ECDH',
+        namedCurve: 'P-256',
+        public: publicKey,
+      },
+      privateKey,
+      256
+    )
+
     // 3.) convert shared-secret into a key
     //
-    let sharedSecretKey = await this._crypto.subtle.importKey(
-      "raw", sharedSecret, 
-      { "name": 'HKDF' }, 
-      false, 
-      ['deriveKey','deriveBits']
-    );
-    
+    let sharedSecretKey = await this._crypto.subtle.importKey('raw', sharedSecret, { name: 'HKDF' }, false, [
+      'deriveKey',
+      'deriveBits',
+    ])
+
     // 4.) create SALT
     //
-    let salt = this._crypto.getRandomValues(new Uint8Array(16));
-    
+    let salt = this._crypto.getRandomValues(new Uint8Array(16))
+
     // 5.) convert the live-shared-secret-key into an aes key
     //
-    let derivedKey = await this._crypto.subtle.deriveBits({
-      "name": 'HKDF', 
-      "hash": 'SHA-256', 
-      "salt": salt,
-      "info": new Uint8Array([])},
-      sharedSecretKey,256
-    );
-    
+    let derivedKey = await this._crypto.subtle.deriveBits(
+      {
+        name: 'HKDF',
+        hash: 'SHA-256',
+        salt: salt,
+        info: new Uint8Array([]),
+      },
+      sharedSecretKey,
+      256
+    )
+
     //
-    // 6.) 
+    // 6.)
     // THIS SHOULD NOT BE THIS HARD!
     //
     //     Convert the Key-Array to a live Key
-    let aes_key = await this._crypto.subtle.importKey(
-      "raw",
-      derivedKey,
-      "AES-GCM",
-      false,
-      ["encrypt","decrypt"]
-    );
-    
+    let aes_key = await this._crypto.subtle.importKey('raw', derivedKey, 'AES-GCM', false, ['encrypt', 'decrypt'])
+
     // 7.) Init Vector
     //
     //
-    let iv = this._crypto.getRandomValues(new Uint8Array(16));
-    
+    let iv = this._crypto.getRandomValues(new Uint8Array(16))
+
     // 7.) Encrypt
     //
     //
-    let encrypted = await this._crypto.subtle.encrypt(
-      { name: "AES-GCM", iv: iv },
-      aes_key,
-      this.base64ToArray(b64data)
-    );
-    
+    let encrypted = await this._crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv }, aes_key, this.base64ToArray(b64data))
+
     // 8.) Base64 and return our data...
     return {
-      "ciphertext": this.arrayToBase64(new Uint8Array(encrypted)),
-      "salt": this.arrayToBase64(salt),
-      "iv": this.arrayToBase64(iv)
-    };
-
-  
-  };
+      ciphertext: this.arrayToBase64(new Uint8Array(encrypted)),
+      salt: this.arrayToBase64(salt),
+      iv: this.arrayToBase64(iv),
+    }
+  }
 
   // //////////////////////////////////////////////////////////////////////////
   // //////////////////////////////////////////////////////////////////////////
@@ -755,98 +689,76 @@ export default class EZ_WEB_CRYPTO {
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
   HKDFDecrypt = async (b64Private, b64Public, b64Salt, b64iv, b64data, returnText = false) => {
-    await this._sleep(0);
+    await this._sleep(0)
 
     // 1.) convert the given keys to real keys in the most
     //     generic way possible...
-    let publicKey = await this.EcdhConvertKey(b64Public);
-    
-    let privateKey = await this.EcdhConvertKey(b64Private);
-    
-    let salt = this.base64ToArray(b64Salt);
-    let iv = this.base64ToArray(b64iv);
-    let data = this.base64ToArray(b64data);
+    let publicKey = await this.EcdhConvertKey(b64Public)
 
-    let decrypted;
-    
-    
+    let privateKey = await this.EcdhConvertKey(b64Private)
+
+    let salt = this.base64ToArray(b64Salt)
+    let iv = this.base64ToArray(b64iv)
+    let data = this.base64ToArray(b64data)
+
+    let decrypted
+
     // 2.) generate shared secret for HKDF
     //
-    let sharedSecret = await this._crypto.subtle.deriveBits({ 
-      "name": "ECDH", 
-      "namedCurve": "P-256", 
-      "public": publicKey 
-    },privateKey,256);
-    
+    let sharedSecret = await this._crypto.subtle.deriveBits(
+      {
+        name: 'ECDH',
+        namedCurve: 'P-256',
+        public: publicKey,
+      },
+      privateKey,
+      256
+    )
+
     // 3.) convert shared-secret into a key
     //
-    let sharedSecretKey = await this._crypto.subtle.importKey(
-      "raw", sharedSecret, 
-      { "name": 'HKDF' }, 
-      false, 
-      ['deriveKey','deriveBits']
-    );
-    
+    let sharedSecretKey = await this._crypto.subtle.importKey('raw', sharedSecret, { name: 'HKDF' }, false, [
+      'deriveKey',
+      'deriveBits',
+    ])
+
     // 4.) convert the live-shared-secret-key into an aes key
     //
-    let derivedKey = await this._crypto.subtle.deriveBits({
-      "name": 'HKDF', 
-      "hash": 'SHA-256', 
-      "salt": salt,
-      "info": new Uint8Array([])},
-      sharedSecretKey,256
-    );
+    let derivedKey = await this._crypto.subtle.deriveBits(
+      {
+        name: 'HKDF',
+        hash: 'SHA-256',
+        salt: salt,
+        info: new Uint8Array([]),
+      },
+      sharedSecretKey,
+      256
+    )
 
     //
-    // 5.) 
+    // 5.)
     //     Convert the Key-Array to a live Key
-    let aes_key = await this._crypto.subtle.importKey(
-      "raw",
-      derivedKey,
-      "AES-GCM",
-      false,
-      ["encrypt","decrypt"]
-    );
+    let aes_key = await this._crypto.subtle.importKey('raw', derivedKey, 'AES-GCM', false, ['encrypt', 'decrypt'])
 
     // 6.) decrypt our data
     //
-    let aes_data;
-    try{
-        aes_data = await this._crypto.subtle.decrypt(
-        { name: "AES-GCM", iv: iv },
-        aes_key,
-        data
-      );
-    } catch(e){
-      console.log({name: e.name, stack: e.stack, message: e.message});
-      throw e;
+    let aes_data
+    try {
+      aes_data = await this._crypto.subtle.decrypt({ name: 'AES-GCM', iv: iv }, aes_key, data)
+    } catch (e) {
+      console.log({ name: e.name, stack: e.stack, message: e.message })
+      throw e
     }
 
-    if(!returnText){
-      return aes_data;
+    if (!returnText) {
+      return aes_data
     } else {
-      decrypted = new Uint8Array(aes_data);
-      decrypted = new TextDecoder().decode(decrypted);
-      return decrypted;
+      decrypted = new Uint8Array(aes_data)
+      decrypted = new TextDecoder().decode(decrypted)
+      return decrypted
     }
+  }
 
-  };
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
   // //////////////////////////////////////////////////////////////////////////
   // //////////////////////////////////////////////////////////////////////////
   //
@@ -860,47 +772,41 @@ export default class EZ_WEB_CRYPTO {
   //
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-  
+
   EcMakeSigKeys = async (exportable = true) => {
-    await this._sleep(0);
+    await this._sleep(0)
 
-  // Step 1) Create ECDSA KeyS
-    let keys = await this._crypto.subtle.generateKey(
-      { name: "ECDSA", namedCurve: "P-256" },
-      exportable,
-      ["sign","verify"]
-    );
-    
-    let b64Keys;
+    // Step 1) Create ECDSA KeyS
+    let keys = await this._crypto.subtle.generateKey({ name: 'ECDSA', namedCurve: 'P-256' }, exportable, [
+      'sign',
+      'verify',
+    ])
 
-  // Step 2a) IF EXTRACTABLE: Export keys to SPKI|PKCS8 format
-    if(exportable){
+    let b64Keys
+
+    // Step 2a) IF EXTRACTABLE: Export keys to SPKI|PKCS8 format
+    if (exportable) {
       b64Keys = await Promise.all([
-        this._crypto.subtle.exportKey("spki", keys.publicKey).then((key) => {
-          return this.arrayToBase64(new Uint8Array(key));
+        this._crypto.subtle.exportKey('spki', keys.publicKey).then((key) => {
+          return this.arrayToBase64(new Uint8Array(key))
         }),
-        this._crypto.subtle.exportKey("pkcs8", keys.privateKey).then((key) => {
-          return this.arrayToBase64(new Uint8Array(key));
-        })
-      ]);
-      
-      return { publicKey: b64Keys[0], privateKey: b64Keys[1] };
+        this._crypto.subtle.exportKey('pkcs8', keys.privateKey).then((key) => {
+          return this.arrayToBase64(new Uint8Array(key))
+        }),
+      ])
 
+      return { publicKey: b64Keys[0], privateKey: b64Keys[1] }
     } else {
-      
-  // Step 2b) NOT NOT NOT EXTRACTABLE: Export just the public key
+      // Step 2b) NOT NOT NOT EXTRACTABLE: Export just the public key
       b64Keys = await Promise.all([
-        this._crypto.subtle.exportKey("spki", keys.publicKey).then((key) => {
-          return this.arrayToBase64(new Uint8Array(key));
-        })
-      ]);
-      return { publicKey: b64Keys[0], privateKey: keys.privateKey };
+        this._crypto.subtle.exportKey('spki', keys.publicKey).then((key) => {
+          return this.arrayToBase64(new Uint8Array(key))
+        }),
+      ])
+      return { publicKey: b64Keys[0], privateKey: keys.privateKey }
     }
+  }
 
-  };
-  
-  
-  
   // //////////////////////////////////////////////////////////////////////////
   // //////////////////////////////////////////////////////////////////////////
   //
@@ -917,20 +823,22 @@ export default class EZ_WEB_CRYPTO {
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
   EcSignData = async (b64PrivateKey, b64data) => {
-    await this._sleep(0);
+    await this._sleep(0)
 
     // 1.) convert the given keys to real keys
-    let privateKey = await this.EcdsaConvertKey(b64PrivateKey);
+    let privateKey = await this.EcdsaConvertKey(b64PrivateKey)
 
     // 2.) sign the data with the live key
-    let signature = await this._crypto.subtle.sign({"name": "ECDSA", "hash": {"name": "SHA-256"}}, privateKey, this.base64ToArray(b64data));
+    let signature = await this._crypto.subtle.sign(
+      { name: 'ECDSA', hash: { name: 'SHA-256' } },
+      privateKey,
+      this.base64ToArray(b64data)
+    )
 
     // 3.) Base64 and return our data...
-    return  await this.arrayToBase64(new Uint8Array(signature));
-  
-  };
-  
-  
+    return await this.arrayToBase64(new Uint8Array(signature))
+  }
+
   // //////////////////////////////////////////////////////////////////////////
   // //////////////////////////////////////////////////////////////////////////
   //
@@ -948,26 +856,23 @@ export default class EZ_WEB_CRYPTO {
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
   EcVerifySig = async (b64PublicKey, b64Signature, b64data) => {
-    await this._sleep(0);
+    await this._sleep(0)
 
     // 1.) convert the given keys to real keys
-    let publicKey = await this.EcdsaConvertKey(b64PublicKey);
-    
+    let publicKey = await this.EcdsaConvertKey(b64PublicKey)
 
     // 2.) Convert the signature to an array
-    let signature = this.base64ToArray(b64Signature);
+    let signature = this.base64ToArray(b64Signature)
 
     // 3.) verify the data with the live key
-    return await this._crypto.subtle.verify({"name": "ECDSA", "hash": {"name": "SHA-256"}}, publicKey, signature, this.base64ToArray(b64data));
+    return await this._crypto.subtle.verify(
+      { name: 'ECDSA', hash: { name: 'SHA-256' } },
+      publicKey,
+      signature,
+      this.base64ToArray(b64data)
+    )
+  }
 
-  };
-  
-  
-  
-  
-  
-  
-  
   // //////////////////////////////////////////////////////////////////////////
   // //////////////////////////////////////////////////////////////////////////
   //
@@ -982,20 +887,18 @@ export default class EZ_WEB_CRYPTO {
   //
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-  
-  
-  
-  EcdhConvertKey = async (unknown_key) => {
-    await this._sleep(0);
 
-    let key;
-    let longKey;
-    
+  EcdhConvertKey = async (unknown_key) => {
+    await this._sleep(0)
+
+    let key
+    let longKey
+
     // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     // NATURAL KEY
-    if(unknown_key instanceof this._crypto.CryptoKey){
-      return unknown_key;
+    if (unknown_key instanceof this._crypto.CryptoKey) {
+      return unknown_key
     }
     //
     //
@@ -1006,15 +909,14 @@ export default class EZ_WEB_CRYPTO {
     //
     try {
       key = await this._crypto.subtle.importKey(
-        "spki",
+        'spki',
         this.base64ToArray(unknown_key),
-        { name: "ECDH", namedCurve: "P-256" },
+        { name: 'ECDH', namedCurve: 'P-256' },
         true,
         []
-      );
-      return key;
-
-    } catch(e){} // DO NOTHING!!!
+      )
+      return key
+    } catch (e) {} // DO NOTHING!!!
     //
     //
     // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -1024,15 +926,14 @@ export default class EZ_WEB_CRYPTO {
     //
     try {
       key = await this._crypto.subtle.importKey(
-        "raw",
+        'raw',
         this.base64ToArray(unknown_key),
-        { name: "ECDH", namedCurve: "P-256" },
+        { name: 'ECDH', namedCurve: 'P-256' },
         true,
         []
-      );
-      return key;
-      
-    } catch(e){} // DO NOTHING!!!
+      )
+      return key
+    } catch (e) {} // DO NOTHING!!!
     //
     //
     // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -1040,17 +941,16 @@ export default class EZ_WEB_CRYPTO {
     // PKCS8 PRIVATE
     //
     //
-    try{
+    try {
       key = await this._crypto.subtle.importKey(
-        "pkcs8",
+        'pkcs8',
         this.base64ToArray(unknown_key),
-        { name: "ECDH", namedCurve: "P-256" },
+        { name: 'ECDH', namedCurve: 'P-256' },
         false,
-        ["deriveKey","deriveBits"]
-      );
-      return key;
-      
-    } catch(e){} // DO NOTHING!!!
+        ['deriveKey', 'deriveBits']
+      )
+      return key
+    } catch (e) {} // DO NOTHING!!!
     //
     //
     // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -1059,27 +959,13 @@ export default class EZ_WEB_CRYPTO {
     //
     //
     try {
-      
-      longKey = new Uint8Array([4].concat(Array.from(this.base64ToArray(unknown_key))));
-      key = await this._crypto.subtle.importKey(
-        "raw",
-        longKey,
-        { name: "ECDH", namedCurve: "P-256" },
-        true,
-        []
-      );
-      return key;
-      
-    } catch(e){
-      throw new Error("UNRECOGNIZED KEY FORMAT");
+      longKey = new Uint8Array([4].concat(Array.from(this.base64ToArray(unknown_key))))
+      key = await this._crypto.subtle.importKey('raw', longKey, { name: 'ECDH', namedCurve: 'P-256' }, true, [])
+      return key
+    } catch (e) {
+      throw new Error('UNRECOGNIZED KEY FORMAT')
     }
-
-
-
   }
-
-
-
 
   // //////////////////////////////////////////////////////////////////////////
   // //////////////////////////////////////////////////////////////////////////
@@ -1095,23 +981,21 @@ export default class EZ_WEB_CRYPTO {
   //
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-  
-  EcdsaConvertKey = async (unknown_key) => {
-    await this._sleep(0);
 
-    let key;
-    let longKey;
-    let err = true;
-    
-    
+  EcdsaConvertKey = async (unknown_key) => {
+    await this._sleep(0)
+
+    let key
+    let longKey
+    let err = true
+
     // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     // NATURAL KEY
-    if(unknown_key instanceof this._crypto.CryptoKey){
-      return unknown_key;
+    if (unknown_key instanceof this._crypto.CryptoKey) {
+      return unknown_key
     }
-    
-    
+
     //
     //
     // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -1120,18 +1004,16 @@ export default class EZ_WEB_CRYPTO {
     //
     //
     try {
-      
       key = await this._crypto.subtle.importKey(
-        "spki",
+        'spki',
         this.base64ToArray(unknown_key),
-        { name: "ECDSA", namedCurve: "P-256" },
+        { name: 'ECDSA', namedCurve: 'P-256' },
         true,
-        ["verify"]
-      );
-      
-      return key;
-      
-    } catch(e){} // DO NOTHING!
+        ['verify']
+      )
+
+      return key
+    } catch (e) {} // DO NOTHING!
 
     //
     //
@@ -1141,18 +1023,16 @@ export default class EZ_WEB_CRYPTO {
     //
     //
     try {
-      
       key = await this._crypto.subtle.importKey(
-        "raw",
+        'raw',
         this.base64ToArray(unknown_key),
-        { name: "ECDSA", namedCurve: "P-256" },
+        { name: 'ECDSA', namedCurve: 'P-256' },
         true,
-        ["verify"]
-      );
+        ['verify']
+      )
 
-      return key;
-      
-    } catch(e){} // DO NOTHING!
+      return key
+    } catch (e) {} // DO NOTHING!
 
     //
     //
@@ -1161,19 +1041,17 @@ export default class EZ_WEB_CRYPTO {
     // PKCS8 PRIVATE
     //
     //
-    try{
-
+    try {
       key = await this._crypto.subtle.importKey(
-        "pkcs8",
+        'pkcs8',
         this.base64ToArray(unknown_key),
-        { name: "ECDSA", namedCurve: "P-256" },
+        { name: 'ECDSA', namedCurve: 'P-256' },
         false,
-        ["sign"]
-      );
+        ['sign']
+      )
 
-      return key;
-      
-    } catch(e){} // DO NOTHING
+      return key
+    } catch (e) {} // DO NOTHING
 
     //
     //
@@ -1183,26 +1061,14 @@ export default class EZ_WEB_CRYPTO {
     //
     //
     try {
+      longKey = new Uint8Array([4].concat(Array.from(this.base64ToArray(unknown_key))))
+      key = await this._crypto.subtle.importKey('raw', longKey, { name: 'ECDSA', namedCurve: 'P-256' }, true, ['sign'])
 
-      longKey = new Uint8Array([4].concat(Array.from(this.base64ToArray(unknown_key))));
-      key = await this._crypto.subtle.importKey(
-        "raw",
-        longKey,
-        { name: "ECDSA", namedCurve: "P-256" },
-        true,
-        ["sign"]
-      );
-
-      return key;
-      
-    } catch(e){
-      throw new Error("UNRECOGNIZED KEY FORMAT");
+      return key
+    } catch (e) {
+      throw new Error('UNRECOGNIZED KEY FORMAT')
     }
-
   }
-
-  
-  
 }
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
