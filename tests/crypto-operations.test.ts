@@ -22,9 +22,11 @@ import {
     describe('Basic Operations', () => {
       test('HASH should generate consistent SHA-256 hashes', async () => {
         const testData = 'test data';
+        const actual = 'kW8AJ6V1B0znKjMXd8NHjWUT94alkb2JLaGld78jNfk='
         const hash1 = await HASH('SHA-256', testData);
         const hash2 = await HASH('SHA-256', testData);
         expect(hash1).toBe(hash2);
+        expect(hash1).toBe(actual)
       });
   
       test('HMAC should generate valid signatures', async () => {
@@ -34,6 +36,16 @@ import {
         expect(signature).toBeTruthy();
         expect(typeof signature).toBe('string');
       });
+
+      test('HMAC should align with the real world', async () => {
+
+        const secret = 'secret key';
+        const data = 'test data';
+        const signature = 'd51c4289e6eea49db00925bb7a948d31309550040f88bc4aba39bb3107c071be'
+        const results = await HMAC(secret,data);
+        expect(signature).toEqual(results)
+
+      })
     });
   
     describe('AES Operations', () => {

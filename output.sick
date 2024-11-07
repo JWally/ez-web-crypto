@@ -1,142 +1,425 @@
 
 
---- File: .git/HEAD ---
+--- File: .babelrc ---
 (Skipped (non-matching extension))
 
 
---- File: .git/ORIG_HEAD ---
-(Skipped (non-matching extension))
+--- File: .eslintrc.json ---
+
+{
+  "ignorePatterns": [
+    "cdk.out/",
+    "coverage/",
+    "lib/**/*.js",
+    "bin/*.js"
+  ],
+  "env": {
+    "browser": false,
+    "es2021": true,
+    "node": true
+  },
+  "extends": ["airbnb-base", "prettier"],
+  "plugins": ["prettier"],
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "rules": {
+    "prettier/prettier": "error",
+    "import/prefer-default-export": "off",
+    "no-await-in-loop": "off"
+  },
+  "overrides": [
+    {
+      "files": ["test/**"],
+      "plugins": ["jest"],
+      "extends": ["plugin:jest/recommended"],
+      "rules": {
+        "import/no-extraneous-dependencies": ["error", { "devDependencies": true }]
+      }
+    },
+    {
+      "files": ["lib/**"],
+      "rules": {
+        "import/no-extraneous-dependencies": ["error", { "devDependencies": false }]
+      }
+    }
+  ]
+}
 
 
---- File: .git/config ---
-(Skipped (non-matching extension))
 
-
---- File: .git/description ---
-(Skipped (non-matching extension))
-
-
---- File: .git/hooks/applypatch-msg.sample ---
-(Skipped (non-matching extension))
-
-
---- File: .git/hooks/commit-msg.sample ---
-(Skipped (non-matching extension))
-
-
---- File: .git/hooks/fsmonitor-watchman.sample ---
-(Skipped (non-matching extension))
-
-
---- File: .git/hooks/post-update.sample ---
-(Skipped (non-matching extension))
-
-
---- File: .git/hooks/pre-applypatch.sample ---
-(Skipped (non-matching extension))
-
-
---- File: .git/hooks/pre-commit.sample ---
-(Skipped (non-matching extension))
-
-
---- File: .git/hooks/pre-merge-commit.sample ---
-(Skipped (non-matching extension))
-
-
---- File: .git/hooks/pre-push.sample ---
-(Skipped (non-matching extension))
-
-
---- File: .git/hooks/pre-rebase.sample ---
-(Skipped (non-matching extension))
-
-
---- File: .git/hooks/pre-receive.sample ---
-(Skipped (non-matching extension))
-
-
---- File: .git/hooks/prepare-commit-msg.sample ---
-(Skipped (non-matching extension))
-
-
---- File: .git/hooks/push-to-checkout.sample ---
-(Skipped (non-matching extension))
-
-
---- File: .git/hooks/sendemail-validate.sample ---
-(Skipped (non-matching extension))
-
-
---- File: .git/hooks/update.sample ---
-(Skipped (non-matching extension))
-
-
---- File: .git/index ---
-(Skipped (non-matching extension))
-
-
---- File: .git/info/exclude ---
-(Skipped (non-matching extension))
-
-
---- File: .git/logs/HEAD ---
-(Skipped (non-matching extension))
-
-
---- File: .git/logs/refs/heads/main ---
-(Skipped (non-matching extension))
-
-
---- File: .git/logs/refs/heads/modularization ---
-(Skipped (non-matching extension))
-
-
---- File: .git/logs/refs/remotes/origin/HEAD ---
-(Skipped (non-matching extension))
-
-
---- File: .git/objects/pack/pack-a8b1011eceeafccbcc10c03a197d3a3b0904402b.idx ---
-(Skipped (non-matching extension))
-
-
---- File: .git/objects/pack/pack-a8b1011eceeafccbcc10c03a197d3a3b0904402b.pack ---
-(Skipped (non-matching extension))
-
-
---- File: .git/objects/pack/pack-a8b1011eceeafccbcc10c03a197d3a3b0904402b.rev ---
-(Skipped (non-matching extension))
-
-
---- File: .git/packed-refs ---
-(Skipped (non-matching extension))
-
-
---- File: .git/refs/heads/main ---
-(Skipped (non-matching extension))
-
-
---- File: .git/refs/heads/modularization ---
-(Skipped (non-matching extension))
-
-
---- File: .git/refs/remotes/origin/HEAD ---
-(Skipped (non-matching extension))
+--- File: .git ---
+(Excluded)
 
 
 --- File: .gitignore ---
-(Skipped (non-matching extension))
+(Excluded)
 
 
 --- File: .npmignore ---
 (Skipped (non-matching extension))
 
 
+--- File: .prettierrc.json ---
+
+{
+  "trailingComma": "es5",
+  "tabWidth": 2,
+  "semi": false,
+  "singleQuote": true,
+  "printWidth": 120
+}
+
+
+
 --- File: README.md ---
 (Skipped (non-matching extension))
 
 
---- File: coverage ---
+--- File: coverage/clover.xml ---
+(Skipped (non-matching extension))
+
+
+--- File: coverage/coverage-final.json ---
+
+{}
+
+
+
+--- File: coverage/lcov-report/base.css ---
+(Skipped (non-matching extension))
+
+
+--- File: coverage/lcov-report/block-navigation.js ---
+
+/* eslint-disable */
+var jumpToCode = (function init() {
+    // Classes of code we would like to highlight in the file view
+    var missingCoverageClasses = ['.cbranch-no', '.cstat-no', '.fstat-no'];
+
+    // Elements to highlight in the file listing view
+    var fileListingElements = ['td.pct.low'];
+
+    // We don't want to select elements that are direct descendants of another match
+    var notSelector = ':not(' + missingCoverageClasses.join('):not(') + ') > '; // becomes `:not(a):not(b) > `
+
+    // Selecter that finds elements on the page to which we can jump
+    var selector =
+        fileListingElements.join(', ') +
+        ', ' +
+        notSelector +
+        missingCoverageClasses.join(', ' + notSelector); // becomes `:not(a):not(b) > a, :not(a):not(b) > b`
+
+    // The NodeList of matching elements
+    var missingCoverageElements = document.querySelectorAll(selector);
+
+    var currentIndex;
+
+    function toggleClass(index) {
+        missingCoverageElements
+            .item(currentIndex)
+            .classList.remove('highlighted');
+        missingCoverageElements.item(index).classList.add('highlighted');
+    }
+
+    function makeCurrent(index) {
+        toggleClass(index);
+        currentIndex = index;
+        missingCoverageElements.item(index).scrollIntoView({
+            behavior: 'smooth',
+            block: 'center',
+            inline: 'center'
+        });
+    }
+
+    function goToPrevious() {
+        var nextIndex = 0;
+        if (typeof currentIndex !== 'number' || currentIndex === 0) {
+            nextIndex = missingCoverageElements.length - 1;
+        } else if (missingCoverageElements.length > 1) {
+            nextIndex = currentIndex - 1;
+        }
+
+        makeCurrent(nextIndex);
+    }
+
+    function goToNext() {
+        var nextIndex = 0;
+
+        if (
+            typeof currentIndex === 'number' &&
+            currentIndex < missingCoverageElements.length - 1
+        ) {
+            nextIndex = currentIndex + 1;
+        }
+
+        makeCurrent(nextIndex);
+    }
+
+    return function jump(event) {
+        if (
+            document.getElementById('fileSearch') === document.activeElement &&
+            document.activeElement != null
+        ) {
+            // if we're currently focused on the search input, we don't want to navigate
+            return;
+        }
+
+        switch (event.which) {
+            case 78: // n
+            case 74: // j
+                goToNext();
+                break;
+            case 66: // b
+            case 75: // k
+            case 80: // p
+                goToPrevious();
+                break;
+        }
+    };
+})();
+window.addEventListener('keydown', jumpToCode);
+
+
+
+--- File: coverage/lcov-report/favicon.png ---
+(Skipped (non-matching extension))
+
+
+--- File: coverage/lcov-report/index.html ---
+(Skipped (non-matching extension))
+
+
+--- File: coverage/lcov-report/index.js.html ---
+(Skipped (non-matching extension))
+
+
+--- File: coverage/lcov-report/prettify.css ---
+(Skipped (non-matching extension))
+
+
+--- File: coverage/lcov-report/prettify.js ---
+
+/* eslint-disable */
+window.PR_SHOULD_USE_CONTINUATION=true;(function(){var h=["break,continue,do,else,for,if,return,while"];var u=[h,"auto,case,char,const,default,double,enum,extern,float,goto,int,long,register,short,signed,sizeof,static,struct,switch,typedef,union,unsigned,void,volatile"];var p=[u,"catch,class,delete,false,import,new,operator,private,protected,public,this,throw,true,try,typeof"];var l=[p,"alignof,align_union,asm,axiom,bool,concept,concept_map,const_cast,constexpr,decltype,dynamic_cast,explicit,export,friend,inline,late_check,mutable,namespace,nullptr,reinterpret_cast,static_assert,static_cast,template,typeid,typename,using,virtual,where"];var x=[p,"abstract,boolean,byte,extends,final,finally,implements,import,instanceof,null,native,package,strictfp,super,synchronized,throws,transient"];var R=[x,"as,base,by,checked,decimal,delegate,descending,dynamic,event,fixed,foreach,from,group,implicit,in,interface,internal,into,is,lock,object,out,override,orderby,params,partial,readonly,ref,sbyte,sealed,stackalloc,string,select,uint,ulong,unchecked,unsafe,ushort,var"];var r="all,and,by,catch,class,else,extends,false,finally,for,if,in,is,isnt,loop,new,no,not,null,of,off,on,or,return,super,then,true,try,unless,until,when,while,yes";var w=[p,"debugger,eval,export,function,get,null,set,undefined,var,with,Infinity,NaN"];var s="caller,delete,die,do,dump,elsif,eval,exit,foreach,for,goto,if,import,last,local,my,next,no,our,print,package,redo,require,sub,undef,unless,until,use,wantarray,while,BEGIN,END";var I=[h,"and,as,assert,class,def,del,elif,except,exec,finally,from,global,import,in,is,lambda,nonlocal,not,or,pass,print,raise,try,with,yield,False,True,None"];var f=[h,"alias,and,begin,case,class,def,defined,elsif,end,ensure,false,in,module,next,nil,not,or,redo,rescue,retry,self,super,then,true,undef,unless,until,when,yield,BEGIN,END"];var H=[h,"case,done,elif,esac,eval,fi,function,in,local,set,then,until"];var A=[l,R,w,s+I,f,H];var e=/^(DIR|FILE|vector|(de|priority_)?queue|list|stack|(const_)?iterator|(multi)?(set|map)|bitset|u?(int|float)\d*)/;var C="str";var z="kwd";var j="com";var O="typ";var G="lit";var L="pun";var F="pln";var m="tag";var E="dec";var J="src";var P="atn";var n="atv";var N="nocode";var M="(?:^^\\.?|[+-]|\\!|\\!=|\\!==|\\#|\\%|\\%=|&|&&|&&=|&=|\\(|\\*|\\*=|\\+=|\\,|\\-=|\\->|\\/|\\/=|:|::|\\;|<|<<|<<=|<=|=|==|===|>|>=|>>|>>=|>>>|>>>=|\\?|\\@|\\[|\\^|\\^=|\\^\\^|\\^\\^=|\\{|\\||\\|=|\\|\\||\\|\\|=|\\~|break|case|continue|delete|do|else|finally|instanceof|return|throw|try|typeof)\\s*";function k(Z){var ad=0;var S=false;var ac=false;for(var V=0,U=Z.length;V<U;++V){var ae=Z[V];if(ae.ignoreCase){ac=true}else{if(/[a-z]/i.test(ae.source.replace(/\\u[0-9a-f]{4}|\\x[0-9a-f]{2}|\\[^ux]/gi,""))){S=true;ac=false;break}}}var Y={b:8,t:9,n:10,v:11,f:12,r:13};function ab(ah){var ag=ah.charCodeAt(0);if(ag!==92){return ag}var af=ah.charAt(1);ag=Y[af];if(ag){return ag}else{if("0"<=af&&af<="7"){return parseInt(ah.substring(1),8)}else{if(af==="u"||af==="x"){return parseInt(ah.substring(2),16)}else{return ah.charCodeAt(1)}}}}function T(af){if(af<32){return(af<16?"\\x0":"\\x")+af.toString(16)}var ag=String.fromCharCode(af);if(ag==="\\"||ag==="-"||ag==="["||ag==="]"){ag="\\"+ag}return ag}function X(am){var aq=am.substring(1,am.length-1).match(new RegExp("\\\\u[0-9A-Fa-f]{4}|\\\\x[0-9A-Fa-f]{2}|\\\\[0-3][0-7]{0,2}|\\\\[0-7]{1,2}|\\\\[\\s\\S]|-|[^-\\\\]","g"));var ak=[];var af=[];var ao=aq[0]==="^";for(var ar=ao?1:0,aj=aq.length;ar<aj;++ar){var ah=aq[ar];if(/\\[bdsw]/i.test(ah)){ak.push(ah)}else{var ag=ab(ah);var al;if(ar+2<aj&&"-"===aq[ar+1]){al=ab(aq[ar+2]);ar+=2}else{al=ag}af.push([ag,al]);if(!(al<65||ag>122)){if(!(al<65||ag>90)){af.push([Math.max(65,ag)|32,Math.min(al,90)|32])}if(!(al<97||ag>122)){af.push([Math.max(97,ag)&~32,Math.min(al,122)&~32])}}}}af.sort(function(av,au){return(av[0]-au[0])||(au[1]-av[1])});var ai=[];var ap=[NaN,NaN];for(var ar=0;ar<af.length;++ar){var at=af[ar];if(at[0]<=ap[1]+1){ap[1]=Math.max(ap[1],at[1])}else{ai.push(ap=at)}}var an=["["];if(ao){an.push("^")}an.push.apply(an,ak);for(var ar=0;ar<ai.length;++ar){var at=ai[ar];an.push(T(at[0]));if(at[1]>at[0]){if(at[1]+1>at[0]){an.push("-")}an.push(T(at[1]))}}an.push("]");return an.join("")}function W(al){var aj=al.source.match(new RegExp("(?:\\[(?:[^\\x5C\\x5D]|\\\\[\\s\\S])*\\]|\\\\u[A-Fa-f0-9]{4}|\\\\x[A-Fa-f0-9]{2}|\\\\[0-9]+|\\\\[^ux0-9]|\\(\\?[:!=]|[\\(\\)\\^]|[^\\x5B\\x5C\\(\\)\\^]+)","g"));var ah=aj.length;var an=[];for(var ak=0,am=0;ak<ah;++ak){var ag=aj[ak];if(ag==="("){++am}else{if("\\"===ag.charAt(0)){var af=+ag.substring(1);if(af&&af<=am){an[af]=-1}}}}for(var ak=1;ak<an.length;++ak){if(-1===an[ak]){an[ak]=++ad}}for(var ak=0,am=0;ak<ah;++ak){var ag=aj[ak];if(ag==="("){++am;if(an[am]===undefined){aj[ak]="(?:"}}else{if("\\"===ag.charAt(0)){var af=+ag.substring(1);if(af&&af<=am){aj[ak]="\\"+an[am]}}}}for(var ak=0,am=0;ak<ah;++ak){if("^"===aj[ak]&&"^"!==aj[ak+1]){aj[ak]=""}}if(al.ignoreCase&&S){for(var ak=0;ak<ah;++ak){var ag=aj[ak];var ai=ag.charAt(0);if(ag.length>=2&&ai==="["){aj[ak]=X(ag)}else{if(ai!=="\\"){aj[ak]=ag.replace(/[a-zA-Z]/g,function(ao){var ap=ao.charCodeAt(0);return"["+String.fromCharCode(ap&~32,ap|32)+"]"})}}}}return aj.join("")}var aa=[];for(var V=0,U=Z.length;V<U;++V){var ae=Z[V];if(ae.global||ae.multiline){throw new Error(""+ae)}aa.push("(?:"+W(ae)+")")}return new RegExp(aa.join("|"),ac?"gi":"g")}function a(V){var U=/(?:^|\s)nocode(?:\s|$)/;var X=[];var T=0;var Z=[];var W=0;var S;if(V.currentStyle){S=V.currentStyle.whiteSpace}else{if(window.getComputedStyle){S=document.defaultView.getComputedStyle(V,null).getPropertyValue("white-space")}}var Y=S&&"pre"===S.substring(0,3);function aa(ab){switch(ab.nodeType){case 1:if(U.test(ab.className)){return}for(var ae=ab.firstChild;ae;ae=ae.nextSibling){aa(ae)}var ad=ab.nodeName;if("BR"===ad||"LI"===ad){X[W]="\n";Z[W<<1]=T++;Z[(W++<<1)|1]=ab}break;case 3:case 4:var ac=ab.nodeValue;if(ac.length){if(!Y){ac=ac.replace(/[ \t\r\n]+/g," ")}else{ac=ac.replace(/\r\n?/g,"\n")}X[W]=ac;Z[W<<1]=T;T+=ac.length;Z[(W++<<1)|1]=ab}break}}aa(V);return{sourceCode:X.join("").replace(/\n$/,""),spans:Z}}function B(S,U,W,T){if(!U){return}var V={sourceCode:U,basePos:S};W(V);T.push.apply(T,V.decorations)}var v=/\S/;function o(S){var V=undefined;for(var U=S.firstChild;U;U=U.nextSibling){var T=U.nodeType;V=(T===1)?(V?S:U):(T===3)?(v.test(U.nodeValue)?S:V):V}return V===S?undefined:V}function g(U,T){var S={};var V;(function(){var ad=U.concat(T);var ah=[];var ag={};for(var ab=0,Z=ad.length;ab<Z;++ab){var Y=ad[ab];var ac=Y[3];if(ac){for(var ae=ac.length;--ae>=0;){S[ac.charAt(ae)]=Y}}var af=Y[1];var aa=""+af;if(!ag.hasOwnProperty(aa)){ah.push(af);ag[aa]=null}}ah.push(/[\0-\uffff]/);V=k(ah)})();var X=T.length;var W=function(ah){var Z=ah.sourceCode,Y=ah.basePos;var ad=[Y,F];var af=0;var an=Z.match(V)||[];var aj={};for(var ae=0,aq=an.length;ae<aq;++ae){var ag=an[ae];var ap=aj[ag];var ai=void 0;var am;if(typeof ap==="string"){am=false}else{var aa=S[ag.charAt(0)];if(aa){ai=ag.match(aa[1]);ap=aa[0]}else{for(var ao=0;ao<X;++ao){aa=T[ao];ai=ag.match(aa[1]);if(ai){ap=aa[0];break}}if(!ai){ap=F}}am=ap.length>=5&&"lang-"===ap.substring(0,5);if(am&&!(ai&&typeof ai[1]==="string")){am=false;ap=J}if(!am){aj[ag]=ap}}var ab=af;af+=ag.length;if(!am){ad.push(Y+ab,ap)}else{var al=ai[1];var ak=ag.indexOf(al);var ac=ak+al.length;if(ai[2]){ac=ag.length-ai[2].length;ak=ac-al.length}var ar=ap.substring(5);B(Y+ab,ag.substring(0,ak),W,ad);B(Y+ab+ak,al,q(ar,al),ad);B(Y+ab+ac,ag.substring(ac),W,ad)}}ah.decorations=ad};return W}function i(T){var W=[],S=[];if(T.tripleQuotedStrings){W.push([C,/^(?:\'\'\'(?:[^\'\\]|\\[\s\S]|\'{1,2}(?=[^\']))*(?:\'\'\'|$)|\"\"\"(?:[^\"\\]|\\[\s\S]|\"{1,2}(?=[^\"]))*(?:\"\"\"|$)|\'(?:[^\\\']|\\[\s\S])*(?:\'|$)|\"(?:[^\\\"]|\\[\s\S])*(?:\"|$))/,null,"'\""])}else{if(T.multiLineStrings){W.push([C,/^(?:\'(?:[^\\\']|\\[\s\S])*(?:\'|$)|\"(?:[^\\\"]|\\[\s\S])*(?:\"|$)|\`(?:[^\\\`]|\\[\s\S])*(?:\`|$))/,null,"'\"`"])}else{W.push([C,/^(?:\'(?:[^\\\'\r\n]|\\.)*(?:\'|$)|\"(?:[^\\\"\r\n]|\\.)*(?:\"|$))/,null,"\"'"])}}if(T.verbatimStrings){S.push([C,/^@\"(?:[^\"]|\"\")*(?:\"|$)/,null])}var Y=T.hashComments;if(Y){if(T.cStyleComments){if(Y>1){W.push([j,/^#(?:##(?:[^#]|#(?!##))*(?:###|$)|.*)/,null,"#"])}else{W.push([j,/^#(?:(?:define|elif|else|endif|error|ifdef|include|ifndef|line|pragma|undef|warning)\b|[^\r\n]*)/,null,"#"])}S.push([C,/^<(?:(?:(?:\.\.\/)*|\/?)(?:[\w-]+(?:\/[\w-]+)+)?[\w-]+\.h|[a-z]\w*)>/,null])}else{W.push([j,/^#[^\r\n]*/,null,"#"])}}if(T.cStyleComments){S.push([j,/^\/\/[^\r\n]*/,null]);S.push([j,/^\/\*[\s\S]*?(?:\*\/|$)/,null])}if(T.regexLiterals){var X=("/(?=[^/*])(?:[^/\\x5B\\x5C]|\\x5C[\\s\\S]|\\x5B(?:[^\\x5C\\x5D]|\\x5C[\\s\\S])*(?:\\x5D|$))+/");S.push(["lang-regex",new RegExp("^"+M+"("+X+")")])}var V=T.types;if(V){S.push([O,V])}var U=(""+T.keywords).replace(/^ | $/g,"");if(U.length){S.push([z,new RegExp("^(?:"+U.replace(/[\s,]+/g,"|")+")\\b"),null])}W.push([F,/^\s+/,null," \r\n\t\xA0"]);S.push([G,/^@[a-z_$][a-z_$@0-9]*/i,null],[O,/^(?:[@_]?[A-Z]+[a-z][A-Za-z_$@0-9]*|\w+_t\b)/,null],[F,/^[a-z_$][a-z_$@0-9]*/i,null],[G,new RegExp("^(?:0x[a-f0-9]+|(?:\\d(?:_\\d+)*\\d*(?:\\.\\d*)?|\\.\\d\\+)(?:e[+\\-]?\\d+)?)[a-z]*","i"),null,"0123456789"],[F,/^\\[\s\S]?/,null],[L,/^.[^\s\w\.$@\'\"\`\/\#\\]*/,null]);return g(W,S)}var K=i({keywords:A,hashComments:true,cStyleComments:true,multiLineStrings:true,regexLiterals:true});function Q(V,ag){var U=/(?:^|\s)nocode(?:\s|$)/;var ab=/\r\n?|\n/;var ac=V.ownerDocument;var S;if(V.currentStyle){S=V.currentStyle.whiteSpace}else{if(window.getComputedStyle){S=ac.defaultView.getComputedStyle(V,null).getPropertyValue("white-space")}}var Z=S&&"pre"===S.substring(0,3);var af=ac.createElement("LI");while(V.firstChild){af.appendChild(V.firstChild)}var W=[af];function ae(al){switch(al.nodeType){case 1:if(U.test(al.className)){break}if("BR"===al.nodeName){ad(al);if(al.parentNode){al.parentNode.removeChild(al)}}else{for(var an=al.firstChild;an;an=an.nextSibling){ae(an)}}break;case 3:case 4:if(Z){var am=al.nodeValue;var aj=am.match(ab);if(aj){var ai=am.substring(0,aj.index);al.nodeValue=ai;var ah=am.substring(aj.index+aj[0].length);if(ah){var ak=al.parentNode;ak.insertBefore(ac.createTextNode(ah),al.nextSibling)}ad(al);if(!ai){al.parentNode.removeChild(al)}}}break}}function ad(ak){while(!ak.nextSibling){ak=ak.parentNode;if(!ak){return}}function ai(al,ar){var aq=ar?al.cloneNode(false):al;var ao=al.parentNode;if(ao){var ap=ai(ao,1);var an=al.nextSibling;ap.appendChild(aq);for(var am=an;am;am=an){an=am.nextSibling;ap.appendChild(am)}}return aq}var ah=ai(ak.nextSibling,0);for(var aj;(aj=ah.parentNode)&&aj.nodeType===1;){ah=aj}W.push(ah)}for(var Y=0;Y<W.length;++Y){ae(W[Y])}if(ag===(ag|0)){W[0].setAttribute("value",ag)}var aa=ac.createElement("OL");aa.className="linenums";var X=Math.max(0,((ag-1))|0)||0;for(var Y=0,T=W.length;Y<T;++Y){af=W[Y];af.className="L"+((Y+X)%10);if(!af.firstChild){af.appendChild(ac.createTextNode("\xA0"))}aa.appendChild(af)}V.appendChild(aa)}function D(ac){var aj=/\bMSIE\b/.test(navigator.userAgent);var am=/\n/g;var al=ac.sourceCode;var an=al.length;var V=0;var aa=ac.spans;var T=aa.length;var ah=0;var X=ac.decorations;var Y=X.length;var Z=0;X[Y]=an;var ar,aq;for(aq=ar=0;aq<Y;){if(X[aq]!==X[aq+2]){X[ar++]=X[aq++];X[ar++]=X[aq++]}else{aq+=2}}Y=ar;for(aq=ar=0;aq<Y;){var at=X[aq];var ab=X[aq+1];var W=aq+2;while(W+2<=Y&&X[W+1]===ab){W+=2}X[ar++]=at;X[ar++]=ab;aq=W}Y=X.length=ar;var ae=null;while(ah<T){var af=aa[ah];var S=aa[ah+2]||an;var ag=X[Z];var ap=X[Z+2]||an;var W=Math.min(S,ap);var ak=aa[ah+1];var U;if(ak.nodeType!==1&&(U=al.substring(V,W))){if(aj){U=U.replace(am,"\r")}ak.nodeValue=U;var ai=ak.ownerDocument;var ao=ai.createElement("SPAN");ao.className=X[Z+1];var ad=ak.parentNode;ad.replaceChild(ao,ak);ao.appendChild(ak);if(V<S){aa[ah+1]=ak=ai.createTextNode(al.substring(W,S));ad.insertBefore(ak,ao.nextSibling)}}V=W;if(V>=S){ah+=2}if(V>=ap){Z+=2}}}var t={};function c(U,V){for(var S=V.length;--S>=0;){var T=V[S];if(!t.hasOwnProperty(T)){t[T]=U}else{if(window.console){console.warn("cannot override language handler %s",T)}}}}function q(T,S){if(!(T&&t.hasOwnProperty(T))){T=/^\s*</.test(S)?"default-markup":"default-code"}return t[T]}c(K,["default-code"]);c(g([],[[F,/^[^<?]+/],[E,/^<!\w[^>]*(?:>|$)/],[j,/^<\!--[\s\S]*?(?:-\->|$)/],["lang-",/^<\?([\s\S]+?)(?:\?>|$)/],["lang-",/^<%([\s\S]+?)(?:%>|$)/],[L,/^(?:<[%?]|[%?]>)/],["lang-",/^<xmp\b[^>]*>([\s\S]+?)<\/xmp\b[^>]*>/i],["lang-js",/^<script\b[^>]*>([\s\S]*?)(<\/script\b[^>]*>)/i],["lang-css",/^<style\b[^>]*>([\s\S]*?)(<\/style\b[^>]*>)/i],["lang-in.tag",/^(<\/?[a-z][^<>]*>)/i]]),["default-markup","htm","html","mxml","xhtml","xml","xsl"]);c(g([[F,/^[\s]+/,null," \t\r\n"],[n,/^(?:\"[^\"]*\"?|\'[^\']*\'?)/,null,"\"'"]],[[m,/^^<\/?[a-z](?:[\w.:-]*\w)?|\/?>$/i],[P,/^(?!style[\s=]|on)[a-z](?:[\w:-]*\w)?/i],["lang-uq.val",/^=\s*([^>\'\"\s]*(?:[^>\'\"\s\/]|\/(?=\s)))/],[L,/^[=<>\/]+/],["lang-js",/^on\w+\s*=\s*\"([^\"]+)\"/i],["lang-js",/^on\w+\s*=\s*\'([^\']+)\'/i],["lang-js",/^on\w+\s*=\s*([^\"\'>\s]+)/i],["lang-css",/^style\s*=\s*\"([^\"]+)\"/i],["lang-css",/^style\s*=\s*\'([^\']+)\'/i],["lang-css",/^style\s*=\s*([^\"\'>\s]+)/i]]),["in.tag"]);c(g([],[[n,/^[\s\S]+/]]),["uq.val"]);c(i({keywords:l,hashComments:true,cStyleComments:true,types:e}),["c","cc","cpp","cxx","cyc","m"]);c(i({keywords:"null,true,false"}),["json"]);c(i({keywords:R,hashComments:true,cStyleComments:true,verbatimStrings:true,types:e}),["cs"]);c(i({keywords:x,cStyleComments:true}),["java"]);c(i({keywords:H,hashComments:true,multiLineStrings:true}),["bsh","csh","sh"]);c(i({keywords:I,hashComments:true,multiLineStrings:true,tripleQuotedStrings:true}),["cv","py"]);c(i({keywords:s,hashComments:true,multiLineStrings:true,regexLiterals:true}),["perl","pl","pm"]);c(i({keywords:f,hashComments:true,multiLineStrings:true,regexLiterals:true}),["rb"]);c(i({keywords:w,cStyleComments:true,regexLiterals:true}),["js"]);c(i({keywords:r,hashComments:3,cStyleComments:true,multilineStrings:true,tripleQuotedStrings:true,regexLiterals:true}),["coffee"]);c(g([],[[C,/^[\s\S]+/]]),["regex"]);function d(V){var U=V.langExtension;try{var S=a(V.sourceNode);var T=S.sourceCode;V.sourceCode=T;V.spans=S.spans;V.basePos=0;q(U,T)(V);D(V)}catch(W){if("console" in window){console.log(W&&W.stack?W.stack:W)}}}function y(W,V,U){var S=document.createElement("PRE");S.innerHTML=W;if(U){Q(S,U)}var T={langExtension:V,numberLines:U,sourceNode:S};d(T);return S.innerHTML}function b(ad){function Y(af){return document.getElementsByTagName(af)}var ac=[Y("pre"),Y("code"),Y("xmp")];var T=[];for(var aa=0;aa<ac.length;++aa){for(var Z=0,V=ac[aa].length;Z<V;++Z){T.push(ac[aa][Z])}}ac=null;var W=Date;if(!W.now){W={now:function(){return +(new Date)}}}var X=0;var S;var ab=/\blang(?:uage)?-([\w.]+)(?!\S)/;var ae=/\bprettyprint\b/;function U(){var ag=(window.PR_SHOULD_USE_CONTINUATION?W.now()+250:Infinity);for(;X<T.length&&W.now()<ag;X++){var aj=T[X];var ai=aj.className;if(ai.indexOf("prettyprint")>=0){var ah=ai.match(ab);var am;if(!ah&&(am=o(aj))&&"CODE"===am.tagName){ah=am.className.match(ab)}if(ah){ah=ah[1]}var al=false;for(var ak=aj.parentNode;ak;ak=ak.parentNode){if((ak.tagName==="pre"||ak.tagName==="code"||ak.tagName==="xmp")&&ak.className&&ak.className.indexOf("prettyprint")>=0){al=true;break}}if(!al){var af=aj.className.match(/\blinenums\b(?::(\d+))?/);af=af?af[1]&&af[1].length?+af[1]:true:false;if(af){Q(aj,af)}S={langExtension:ah,sourceNode:aj,numberLines:af};d(S)}}}if(X<T.length){setTimeout(U,250)}else{if(ad){ad()}}}U()}window.prettyPrintOne=y;window.prettyPrint=b;window.PR={createSimpleLexer:g,registerLangHandler:c,sourceDecorator:i,PR_ATTRIB_NAME:P,PR_ATTRIB_VALUE:n,PR_COMMENT:j,PR_DECLARATION:E,PR_KEYWORD:z,PR_LITERAL:G,PR_NOCODE:N,PR_PLAIN:F,PR_PUNCTUATION:L,PR_SOURCE:J,PR_STRING:C,PR_TAG:m,PR_TYPE:O}})();PR.registerLangHandler(PR.createSimpleLexer([],[[PR.PR_DECLARATION,/^<!\w[^>]*(?:>|$)/],[PR.PR_COMMENT,/^<\!--[\s\S]*?(?:-\->|$)/],[PR.PR_PUNCTUATION,/^(?:<[%?]|[%?]>)/],["lang-",/^<\?([\s\S]+?)(?:\?>|$)/],["lang-",/^<%([\s\S]+?)(?:%>|$)/],["lang-",/^<xmp\b[^>]*>([\s\S]+?)<\/xmp\b[^>]*>/i],["lang-handlebars",/^<script\b[^>]*type\s*=\s*['"]?text\/x-handlebars-template['"]?\b[^>]*>([\s\S]*?)(<\/script\b[^>]*>)/i],["lang-js",/^<script\b[^>]*>([\s\S]*?)(<\/script\b[^>]*>)/i],["lang-css",/^<style\b[^>]*>([\s\S]*?)(<\/style\b[^>]*>)/i],["lang-in.tag",/^(<\/?[a-z][^<>]*>)/i],[PR.PR_DECLARATION,/^{{[#^>/]?\s*[\w.][^}]*}}/],[PR.PR_DECLARATION,/^{{&?\s*[\w.][^}]*}}/],[PR.PR_DECLARATION,/^{{{>?\s*[\w.][^}]*}}}/],[PR.PR_COMMENT,/^{{![^}]*}}/]]),["handlebars","hbs"]);PR.registerLangHandler(PR.createSimpleLexer([[PR.PR_PLAIN,/^[ \t\r\n\f]+/,null," \t\r\n\f"]],[[PR.PR_STRING,/^\"(?:[^\n\r\f\\\"]|\\(?:\r\n?|\n|\f)|\\[\s\S])*\"/,null],[PR.PR_STRING,/^\'(?:[^\n\r\f\\\']|\\(?:\r\n?|\n|\f)|\\[\s\S])*\'/,null],["lang-css-str",/^url\(([^\)\"\']*)\)/i],[PR.PR_KEYWORD,/^(?:url|rgb|\!important|@import|@page|@media|@charset|inherit)(?=[^\-\w]|$)/i,null],["lang-css-kw",/^(-?(?:[_a-z]|(?:\\[0-9a-f]+ ?))(?:[_a-z0-9\-]|\\(?:\\[0-9a-f]+ ?))*)\s*:/i],[PR.PR_COMMENT,/^\/\*[^*]*\*+(?:[^\/*][^*]*\*+)*\//],[PR.PR_COMMENT,/^(?:<!--|-->)/],[PR.PR_LITERAL,/^(?:\d+|\d*\.\d+)(?:%|[a-z]+)?/i],[PR.PR_LITERAL,/^#(?:[0-9a-f]{3}){1,2}/i],[PR.PR_PLAIN,/^-?(?:[_a-z]|(?:\\[\da-f]+ ?))(?:[_a-z\d\-]|\\(?:\\[\da-f]+ ?))*/i],[PR.PR_PUNCTUATION,/^[^\s\w\'\"]+/]]),["css"]);PR.registerLangHandler(PR.createSimpleLexer([],[[PR.PR_KEYWORD,/^-?(?:[_a-z]|(?:\\[\da-f]+ ?))(?:[_a-z\d\-]|\\(?:\\[\da-f]+ ?))*/i]]),["css-kw"]);PR.registerLangHandler(PR.createSimpleLexer([],[[PR.PR_STRING,/^[^\)\"\']+/]]),["css-str"]);
+
+
+
+--- File: coverage/lcov-report/sort-arrow-sprite.png ---
+(Skipped (non-matching extension))
+
+
+--- File: coverage/lcov-report/sorter.js ---
+
+/* eslint-disable */
+var addSorting = (function() {
+    'use strict';
+    var cols,
+        currentSort = {
+            index: 0,
+            desc: false
+        };
+
+    // returns the summary table element
+    function getTable() {
+        return document.querySelector('.coverage-summary');
+    }
+    // returns the thead element of the summary table
+    function getTableHeader() {
+        return getTable().querySelector('thead tr');
+    }
+    // returns the tbody element of the summary table
+    function getTableBody() {
+        return getTable().querySelector('tbody');
+    }
+    // returns the th element for nth column
+    function getNthColumn(n) {
+        return getTableHeader().querySelectorAll('th')[n];
+    }
+
+    function onFilterInput() {
+        const searchValue = document.getElementById('fileSearch').value;
+        const rows = document.getElementsByTagName('tbody')[0].children;
+        for (let i = 0; i < rows.length; i++) {
+            const row = rows[i];
+            if (
+                row.textContent
+                    .toLowerCase()
+                    .includes(searchValue.toLowerCase())
+            ) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        }
+    }
+
+    // loads the search box
+    function addSearchBox() {
+        var template = document.getElementById('filterTemplate');
+        var templateClone = template.content.cloneNode(true);
+        templateClone.getElementById('fileSearch').oninput = onFilterInput;
+        template.parentElement.appendChild(templateClone);
+    }
+
+    // loads all columns
+    function loadColumns() {
+        var colNodes = getTableHeader().querySelectorAll('th'),
+            colNode,
+            cols = [],
+            col,
+            i;
+
+        for (i = 0; i < colNodes.length; i += 1) {
+            colNode = colNodes[i];
+            col = {
+                key: colNode.getAttribute('data-col'),
+                sortable: !colNode.getAttribute('data-nosort'),
+                type: colNode.getAttribute('data-type') || 'string'
+            };
+            cols.push(col);
+            if (col.sortable) {
+                col.defaultDescSort = col.type === 'number';
+                colNode.innerHTML =
+                    colNode.innerHTML + '<span class="sorter"></span>';
+            }
+        }
+        return cols;
+    }
+    // attaches a data attribute to every tr element with an object
+    // of data values keyed by column name
+    function loadRowData(tableRow) {
+        var tableCols = tableRow.querySelectorAll('td'),
+            colNode,
+            col,
+            data = {},
+            i,
+            val;
+        for (i = 0; i < tableCols.length; i += 1) {
+            colNode = tableCols[i];
+            col = cols[i];
+            val = colNode.getAttribute('data-value');
+            if (col.type === 'number') {
+                val = Number(val);
+            }
+            data[col.key] = val;
+        }
+        return data;
+    }
+    // loads all row data
+    function loadData() {
+        var rows = getTableBody().querySelectorAll('tr'),
+            i;
+
+        for (i = 0; i < rows.length; i += 1) {
+            rows[i].data = loadRowData(rows[i]);
+        }
+    }
+    // sorts the table using the data for the ith column
+    function sortByIndex(index, desc) {
+        var key = cols[index].key,
+            sorter = function(a, b) {
+                a = a.data[key];
+                b = b.data[key];
+                return a < b ? -1 : a > b ? 1 : 0;
+            },
+            finalSorter = sorter,
+            tableBody = document.querySelector('.coverage-summary tbody'),
+            rowNodes = tableBody.querySelectorAll('tr'),
+            rows = [],
+            i;
+
+        if (desc) {
+            finalSorter = function(a, b) {
+                return -1 * sorter(a, b);
+            };
+        }
+
+        for (i = 0; i < rowNodes.length; i += 1) {
+            rows.push(rowNodes[i]);
+            tableBody.removeChild(rowNodes[i]);
+        }
+
+        rows.sort(finalSorter);
+
+        for (i = 0; i < rows.length; i += 1) {
+            tableBody.appendChild(rows[i]);
+        }
+    }
+    // removes sort indicators for current column being sorted
+    function removeSortIndicators() {
+        var col = getNthColumn(currentSort.index),
+            cls = col.className;
+
+        cls = cls.replace(/ sorted$/, '').replace(/ sorted-desc$/, '');
+        col.className = cls;
+    }
+    // adds sort indicators for current column being sorted
+    function addSortIndicators() {
+        getNthColumn(currentSort.index).className += currentSort.desc
+            ? ' sorted-desc'
+            : ' sorted';
+    }
+    // adds event listeners for all sorter widgets
+    function enableUI() {
+        var i,
+            el,
+            ithSorter = function ithSorter(i) {
+                var col = cols[i];
+
+                return function() {
+                    var desc = col.defaultDescSort;
+
+                    if (currentSort.index === i) {
+                        desc = !currentSort.desc;
+                    }
+                    sortByIndex(i, desc);
+                    removeSortIndicators();
+                    currentSort.index = i;
+                    currentSort.desc = desc;
+                    addSortIndicators();
+                };
+            };
+        for (i = 0; i < cols.length; i += 1) {
+            if (cols[i].sortable) {
+                // add the click event handler on the th so users
+                // dont have to click on those tiny arrows
+                el = getNthColumn(i).querySelector('.sorter').parentElement;
+                if (el.addEventListener) {
+                    el.addEventListener('click', ithSorter(i));
+                } else {
+                    el.attachEvent('onclick', ithSorter(i));
+                }
+            }
+        }
+    }
+    // adds sorting functionality to the UI
+    return function() {
+        if (!getTable()) {
+            return;
+        }
+        cols = loadColumns();
+        loadData();
+        addSearchBox();
+        addSortIndicators();
+        enableUI();
+    };
+})();
+
+window.addEventListener('load', addSorting);
+
+
+
+--- File: coverage/lcov.info ---
+(Skipped (non-matching extension))
+
+
+--- File: coverage/unitTestReport.xml ---
+(Skipped (non-matching extension))
+
+
+--- File: dist ---
 (Excluded)
 
 
@@ -205,10 +488,1219 @@ declare module "@justinwwolcott/ez-web-crypto" {
 
 
 --- File: index.js ---
-(Skipped (non-matching extension))
+
+// ////////////////////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////////
+//
+// Class with methods to make working with subtle crypto
+// easier and more obvious
+//
+
+export default class EZ_WEB_CRYPTO {
+
+  constructor() {
+    this._initializeCrypto();
+  }
+
+  async _initializeCrypto() {
+    if (typeof globalThis.crypto !== 'undefined') {
+      this._crypto = globalThis.crypto;
+      this._crypto.CryptoKey = globalThis.CryptoKey || null;
+    } else if (typeof globalThis.require === 'function') {
+      // Node.js environment
+      const { webcrypto } = await import('crypto');
+      this._crypto = webcrypto;
+      this._crypto.CryptoKey = null; // Node.js does not have a CryptoKey global
+    } else {
+      throw new Error('Crypto API is not available in this environment');
+    }
+  }
+
+  async _sleep(duration) {
+    await new Promise(resolve => setTimeout(resolve, duration));
+  }
+
+  // //////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////
+  //
+  // Function:     base64ToArray
+  // What is this: Take a base64 string. Convert it to a Uint8Array...
+  //
+  // Arguments:    strng: - base64 encoded string
+  //
+  // Returns:      Uint8Array
+  // Notes:
+  //
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+  base64ToArray(strng) {
+    return Uint8Array.from(atob(strng), (c) => c.charCodeAt(0));
+  }
+
+  // //////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////
+  //
+  // Function:     arrayToBase64
+  // What is this: take a Uint8Array, make it a valid base64 string
+  //
+  // Arguments:    ary: - Uint8Array
+  //
+  // Returns:      Base64 String
+  // Notes:
+  //
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+  arrayToBase64(utf8Bytes) {
+    // Split the bytes into smaller chunks to avoid call stack issues
+    const chunkSize = 8192;
+    const chunks = [];
+
+    for (let i = 0; i < utf8Bytes.length; i += chunkSize) {
+      const chunk = utf8Bytes.subarray(i, i + chunkSize);
+      chunks.push(String.fromCharCode.apply(null, chunk));
+    }
+
+    // Convert the bytes to a base64 string
+    const base64 = btoa(chunks.join(''));
+
+    return base64;
+  }
+
+  // //////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////
+  //
+  // Function:     hmac (static) (async)
+  // What is this: Create a cryptographic signature for a piece of data given a *SHARED* secret.
+  //               Similar to ECDSA - Except both parties have to have the secret-key in advance
+  //               to make it work.
+  //
+  // Arguments:    secret - this is the shared secret
+  //               data   - this is the string you're encrypting
+  //
+  // Returns:      hex encoded 32 character string or something...(todo: check length - better def)
+  // Notes:        https://stackoverflow.com/questions/47329132/how-to-get-hmac-with-crypto-web-api_47332317
+  //
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+  HMAC = async (secret, data) => {
+    await this._sleep(0);
+
+    // To do work, we need to convert text to Uint8Arrays
+    let encoder = new TextEncoder("utf-8");
+    let encodedSecret = encoder.encode(secret);
+    let encodedData = encoder.encode(data);
+
+    // Create our HMAC Key
+    let key = await this._crypto.subtle.importKey(
+      "raw",
+      encodedSecret,
+      { name: "HMAC", hash: { name: "SHA-256" } },
+      false,
+      ["sign", "verify"]
+    );
+
+    // HMAC Sign our data with our HMAC Key
+    let sig = await this._crypto.subtle.sign("HMAC", key, encodedData);
+
+    // Turn the signature into an array; then into hex-text
+    // (todo: Maybe this is its own method...?)
+    //
+    let b = new Uint8Array(sig);
+    let str = Array.prototype.map
+      .call(b, (x) => ("00" + x.toString(16)).slice(-2))
+      .join("");
+
+    return str;
+  }
 
 
---- File: jest.config.js ---
+  // //////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////
+  //
+  // Function:     HASH (static) (async)
+  // What is this: The digest() method of the SubtleCrypto interface generates a digest of the given data. 
+  //               A digest is a short fixed-length value derived from some variable-length input.
+  //               Cryptographic digests should exhibit collision-resistance, meaning that it's hard to come up 
+  //               with two different inputs that have the same digest value.
+  //
+  // Arguments:    algo - this is the string you're hashing for
+  //               data   - This is the algorithm you're using to hash the data with (SHA-1, SHA-256, SHA-384, SHA-512)
+  //
+  // Returns:      the hash of the data you provided as a base64 string
+  //
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  HASH = async (algo, data, len) => {
+
+    await this._sleep(0);
+
+    let hash = await this._crypto.subtle.digest(algo, new TextEncoder().encode(data));
+    
+    let ary = new Uint8Array(hash);
+
+    let outAry;
+
+    if(len){
+      // initialize outAry to the desired size
+      outAry = new Uint8Array(len,0);
+
+      let min = Math.min(len, ary.length);
+      let max = Math.max(len, ary.length);
+
+      for(var i = 0; i < max; i++){
+        outAry[i%len] = outAry[i%len] ^ ary[i%ary.length];
+      }
+    } else {
+      outAry = ary;
+    }
+
+    return this.arrayToBase64(new Uint8Array(outAry));
+
+  }
+
+
+
+  // //////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////
+  //
+  //
+  // Function:     PASSWORD_ENCRYPT
+  // What is this: Dead simple method to encrypt a piece of data with a password
+  //               that can later be decrypted needing only that password 
+  //
+  // Arguments:    password: string; plaintext string of user's password
+  //               base64data: string; what you want to encrypt
+  //
+  // Returns:      base64 encoded, stringified object containing the AES key used
+  //               to encrypt the data, and the ciphertext itself
+  // Notes:
+  //
+  //
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  PASSWORD_ENCRYPT = async(password, base64data) => {
+
+      await this._sleep(0);
+
+      for(let i = 0; i < 10; i++){
+        password = await this.HASH("SHA-512", password);
+      }
+      
+      let passwordHash = btoa(password);
+    
+      let aes = await this.AESMakeKey(true);
+
+      let output = await this.AESEncrypt(aes, base64data, passwordHash);
+
+      return btoa(JSON.stringify({ciphertext: output.ciphertext, aes}));
+  }
+
+
+
+  // //////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////
+  //
+  //
+  // Function:     PASSWORD_DECRYPT
+  // What is this: Counterparty to PASSWORD_ENCRYPT. Give it a password, and
+  //               the encrypted data from PASSWORD_ENCRYPT; it should give you
+  //               the initial plaintext...
+  //
+  // Arguments:    password: string; plaintext string of user's password
+  //               base64data: password-data
+  //
+  // Returns:      plaintext
+  //
+  // Notes:
+  //
+  //
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  PASSWORD_DECRYPT = async(password, base64data) => {
+
+    await this._sleep(0);
+
+    for(let i = 0; i < 10; i++){
+      password = await this.HASH("SHA-512", password);
+    }
+      
+    let passwordHash = btoa(password);
+
+    let encryptedDataObject = JSON.parse(atob(base64data));
+  
+    let aes = await this.AESImportKey(encryptedDataObject.aes,false);
+
+    let ciphertext = encryptedDataObject.ciphertext;
+
+    let plaintext = await this.AESDecrypt(aes, passwordHash, ciphertext, true);
+
+    return plaintext;
+}
+
+
+
+
+
+
+
+
+  // //////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////
+  //
+  // Function:     AESMakeKey (async)
+  // What is this: Generate an AES Key and return its hex
+  //
+  // Arguments:    *NONE*
+  //
+  // Returns:      base64 string
+  // Notes:
+  //
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+  AESMakeKey = async (exportable = true) => {
+    await this._sleep(0);
+
+    // 1.) Generate the Key
+    let key = await this._crypto.subtle.generateKey(
+      { name: "AES-GCM", length: 256 },
+      exportable,
+      ["encrypt", "decrypt"]
+    );
+
+
+    // 2.) 
+    if(exportable){
+      //Return it as b64 if its exportable
+      
+      let out = await this._crypto.subtle.exportKey("raw", key);
+      return this.arrayToBase64(new Uint8Array(out));
+    } else {
+      // else return the CryptoKey Object
+      
+      return key;
+    }
+  };
+  
+  
+  // //////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////
+  //
+  // Function:     AESImportKey (async)
+  // What is this: Generate an AES Key and return its hex
+  //
+  // Arguments:    base64 string
+  //
+  // Returns:      Live AES Key
+  // Notes:
+  //
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+  AESImportKey = async (aes_key, exportable = true) => {
+    await this._sleep(0);
+
+
+    if(aes_key instanceof this._crypto.CryptoKey){
+      return aes_key;
+    } else {
+
+      // 1.) Generate the Key
+      return await this._crypto.subtle.importKey(
+          "raw",
+          this.base64ToArray(aes_key).buffer,
+          "AES-GCM",
+          exportable,
+          ["encrypt", "decrypt"]
+        );
+    }
+  };
+
+  // //////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////
+  //
+  // Function:     AESEncrypt (async)
+  // What is this: Given
+  //
+  // Arguments:    key:  base64 AES-key
+  //               data: uInt8Array
+  //
+  // Returns:      base64 string
+  // Notes:
+  //
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+  async AESEncrypt(base_64_key, base_64_data, base_64_nonce = false) {
+    await this._sleep(0);
+    
+    // 0.) Pass Key to 
+    let aes_key = await this.AESImportKey(base_64_key);
+
+
+    // 3.) Create a nonce why not?
+    let nonce;
+    
+    if(base_64_nonce){
+      nonce = this.base64ToArray(base_64_nonce);
+    } else {
+      nonce = this._crypto.getRandomValues(new Uint8Array(16));
+    }
+
+    // 4.) encrypt our data
+    let encrypted = await this._crypto.subtle.encrypt(
+      { name: "AES-GCM", iv: nonce },
+      aes_key,
+      this.base64ToArray(base_64_data)
+    );
+
+    // 5.) Base64 and return our data...
+    return {
+      ciphertext: this.arrayToBase64(new Uint8Array(encrypted)),
+      iv: this.arrayToBase64(nonce),
+    };
+  }
+
+  // //////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////
+  //
+  // Function:     AESDecrypt (async)
+  // What is this: Given
+  //
+  // Arguments:    key:  base64 AES-key
+  //               nonce: base64 of the nonce used at encryption (ok if it is public)
+  //               ciphertext: base64 of what's been encoded
+  //
+  // Returns:      base64 string
+  // Notes:
+  //
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+  async AESDecrypt(base_64_key, base_64_nonce, base_64_cipher, returnText = false) {
+    await this._sleep(0);
+
+    // 1.) Convert out from base64 to array
+    let aes_key = await this.AESImportKey(base_64_key);
+    let nonce_ary = this.base64ToArray(base_64_nonce);
+    let cipher_ary = this.base64ToArray(base_64_cipher);
+    let decrypted;
+
+
+
+    // 3.) Decrypt
+    decrypted = await this._crypto.subtle.decrypt(
+      { name: "AES-GCM", iv: nonce_ary },
+      aes_key,
+      cipher_ary
+    );
+
+    if(!returnText){
+      return decrypted;
+    } else {
+      decrypted = new Uint8Array(decrypted);
+
+      decrypted = new TextDecoder().decode(decrypted);
+
+      return decrypted;
+    }
+  }
+
+  // //////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////
+  //
+  // Function:     EcMakeCryptKeys (async)
+  // What is this: Given
+  //
+  // Arguments:    none
+  //
+  // Returns:      object containing public and private key pair
+  // Notes:
+  //
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+  EcMakeCryptKeys = async (exportable = true) => {
+    await this._sleep(0);
+
+    // Step 1) Create ECDH KeyS
+    let keys = await this._crypto.subtle.generateKey(
+      { name: "ECDH", namedCurve: "P-256" },
+      exportable,
+      ["deriveKey","deriveBits"]
+    );
+
+    // Step 2) Export keys to SPKI|PKCS8|JWK|RAW format
+    let exportKeys;
+
+    if(exportable){
+      exportKeys = await Promise.all([
+          this._crypto.subtle.exportKey("spki", keys.publicKey).then((key) => {
+            return this.arrayToBase64(new Uint8Array(key));
+          }),
+          this._crypto.subtle.exportKey("pkcs8", keys.privateKey).then((key) => {
+            return this.arrayToBase64(new Uint8Array(key));
+          }),
+          this._crypto.subtle.exportKey("jwk", keys.publicKey).then((key) => {
+            return (key);
+          }),
+          this._crypto.subtle.exportKey("jwk", keys.privateKey).then((key) => {
+            return (key);
+          }),
+          this._crypto.subtle.exportKey("raw", keys.publicKey).then((key) => {
+            return this.arrayToBase64( new Uint8Array(key));
+          }),
+          this._crypto.subtle.exportKey("raw", keys.publicKey).then((key) => {
+            return this.arrayToBase64( new Uint8Array(key).slice(1,1000));
+          })
+      ]);
+      
+    } else {
+      exportKeys = await Promise.all([
+        //
+          this._crypto.subtle.exportKey("spki", keys.publicKey).then((key) => {
+            return this.arrayToBase64(new Uint8Array(key));
+          }),
+        //
+        (new Promise((s,j) => {return s(keys.privateKey)})),
+        //
+          this._crypto.subtle.exportKey("raw", keys.publicKey).then((key) => {
+            return this.arrayToBase64( new Uint8Array(key));
+          }),
+        //
+          this._crypto.subtle.exportKey("raw", keys.publicKey).then((key) => {
+            return this.arrayToBase64( new Uint8Array(key).slice(1,1000));
+          })
+      ]);
+    }
+
+    if(exportable){
+      return { 
+        publicKey: exportKeys[0], 
+        privateKey: exportKeys[1], 
+        jwkPublicKey: exportKeys[2], 
+        jwkPrivateKey: exportKeys[3], 
+        rawPublicKey: exportKeys[4],
+        rawPublicKeyLite: exportKeys[5]
+      };
+    } else {
+        return { 
+          publicKey: exportKeys[0], 
+          privateKey: exportKeys[1], 
+          rawPublicKey: exportKeys[2], 
+          rawPublicKeyLite: exportKeys[3]
+        };
+    }
+
+    // Step 3) Convert the keys to base64 and return...
+  };
+
+  // //////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////
+  //
+  // Function:     EcEncrypt (async)
+  // What is this: Encrypt Uint8Data with 2 SPKI-Encoded ECDH Keys.
+  //               ---
+  //               Basically it does the dirty work of:
+  //               - convert base64 keys to live keys
+  //               - creating AES key from live keys
+  //               - encrypting data with AES Key
+  //               - return base64 ciphertext and nonce
+  //
+  //
+  // Arguments:    base64privateKey: string;
+  //               base64publicKey: string;
+  //               base64data: string;
+  //
+  // Returns:      object containing public and private key pair
+  // Notes:
+  //
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+  EcEncrypt = async (b64Private, b64Public, b64data) => {
+    await this._sleep(0);
+
+    // 1.) convert the given keys to real keys in the most
+    //     generic way possible...
+    let publicKey = await this.EcdhConvertKey(b64Public);
+    let privateKey = await this.EcdhConvertKey(b64Private);
+    
+    // 2.) generate shared key
+    let aes_key = await this._crypto.subtle.deriveKey(
+      { name: "ECDH", public: publicKey },
+      privateKey,
+      { name: "AES-GCM", length: 256 },
+      false,
+      ["encrypt", "decrypt"]
+    )
+    
+    // 3.) Work smarter, not harder, dummy...
+    return await this.AESEncrypt(aes_key, b64data);
+  
+  };
+
+  // //////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////
+  //
+  // Function:     EcDecrypt (async)
+  // What is this: Decrypt Uint8Data with 2 SPKI-Encoded ECDH Keys.
+  //               ---
+  //               Basically it does the dirty work of:
+  //               - convert base64 keys to live keys
+  //               - creating AES key from live keys
+  //               - encrypting data with AES Key
+  //               - return base64 ciphertext and nonce
+  //
+  //
+  // Arguments:    base64privateKey: string;
+  //               base64publicKey: string;
+  //               base64nonce: string;
+  //               base64data: string;
+  //
+  // Returns:      object containing public and private key pair
+  // Notes:
+  //
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+  EcDecrypt = async (b64Private, b64Public, b64Nonce, b64data, returnText = false) => {
+
+    // 1.) convert the given keys to real keys in the most
+    //     generic way possible...
+    let publicKey = await this.EcdhConvertKey(b64Public);
+    let privateKey = await this.EcdhConvertKey(b64Private);
+    let nonce = this.base64ToArray(b64Nonce);
+    let data = this.base64ToArray(b64data);
+    let decrypted;
+
+    // 2.) generate shared key
+    let aes_key = await this._crypto.subtle.deriveKey(
+      { name: "ECDH", public: publicKey },
+      privateKey,
+      { name: "AES-GCM", length: 256 },
+      false,
+      ["encrypt", "decrypt"]
+    );
+
+    // 3..) decrypt our data
+    const decryptedData = await this._crypto.subtle.decrypt(
+      { name: "AES-GCM", iv: nonce },
+      aes_key,
+      data
+    );
+
+    if(!returnText){
+      return decryptedData;
+    } else {
+      decrypted = new Uint8Array(decryptedData);
+      decrypted = new TextDecoder().decode(decrypted);
+      return decrypted;
+    }
+  };
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  // //////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////
+  //
+  // Function:     HKDFEncrypt (async)
+  // What is this: Encrypt Uint8Data with 2 SPKI-Encoded ECDH Keys.
+  //               ---
+  //               Basically it does the dirty work of:
+  //               - convert base64 keys to live keys
+  //               - creating AES key from live keys
+  //               - encrypting data with AES Key
+  //               - return base64 ciphertext and nonce
+  //
+  //
+  // Arguments:    base64privateKey: string;
+  //               base64publicKey: string;
+  //               base64data: string;
+  //
+  // Returns:      object containing public and private key pair
+  // Notes:
+  //
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+  HKDFEncrypt = async (b64Private, b64Public, b64data) => {
+    await this._sleep(0);
+
+    // 1.) convert the given keys to real keys in the most
+    //     generic way possible...
+    let publicKey = await this.EcdhConvertKey(b64Public);
+    let privateKey = await this.EcdhConvertKey(b64Private);
+    
+    // 2.) generate shared secret for HKDF
+    //
+    let sharedSecret = await this._crypto.subtle.deriveBits({ 
+      "name": "ECDH", 
+      "namedCurve": "P-256", 
+      "public": publicKey 
+    },privateKey,256);
+    
+    // 3.) convert shared-secret into a key
+    //
+    let sharedSecretKey = await this._crypto.subtle.importKey(
+      "raw", sharedSecret, 
+      { "name": 'HKDF' }, 
+      false, 
+      ['deriveKey','deriveBits']
+    );
+    
+    // 4.) create SALT
+    //
+    let salt = this._crypto.getRandomValues(new Uint8Array(16));
+    
+    // 5.) convert the live-shared-secret-key into an aes key
+    //
+    let derivedKey = await this._crypto.subtle.deriveBits({
+      "name": 'HKDF', 
+      "hash": 'SHA-256', 
+      "salt": salt,
+      "info": new Uint8Array([])},
+      sharedSecretKey,256
+    );
+    
+    //
+    // 6.) 
+    // THIS SHOULD NOT BE THIS HARD!
+    //
+    //     Convert the Key-Array to a live Key
+    let aes_key = await this._crypto.subtle.importKey(
+      "raw",
+      derivedKey,
+      "AES-GCM",
+      false,
+      ["encrypt","decrypt"]
+    );
+    
+    // 7.) Init Vector
+    //
+    //
+    let iv = this._crypto.getRandomValues(new Uint8Array(16));
+    
+    // 7.) Encrypt
+    //
+    //
+    let encrypted = await this._crypto.subtle.encrypt(
+      { name: "AES-GCM", iv: iv },
+      aes_key,
+      this.base64ToArray(b64data)
+    );
+    
+    // 8.) Base64 and return our data...
+    return {
+      "ciphertext": this.arrayToBase64(new Uint8Array(encrypted)),
+      "salt": this.arrayToBase64(salt),
+      "iv": this.arrayToBase64(iv)
+    };
+
+  
+  };
+
+  // //////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////
+  //
+  // Function:     HKDFDecrypt (async)
+  // What is this: Decrypt Uint8Data with 2 SPKI-Encoded ECDH Keys.
+  //               ---
+  //               Basically it does the dirty work of:
+  //               - convert base64 keys to live keys
+  //               - creating AES key from live keys
+  //               - encrypting data with AES Key
+  //               - return base64 ciphertext and nonce
+  //
+  //
+  // Arguments:    base64privateKey: string;
+  //               base64publicKey: string;
+  //               base64nonce: string;
+  //               base64data: string;
+  //
+  // Returns:      object containing public and private key pair
+  // Notes:
+  //
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+  HKDFDecrypt = async (b64Private, b64Public, b64Salt, b64iv, b64data, returnText = false) => {
+    await this._sleep(0);
+
+    // 1.) convert the given keys to real keys in the most
+    //     generic way possible...
+    let publicKey = await this.EcdhConvertKey(b64Public);
+    
+    let privateKey = await this.EcdhConvertKey(b64Private);
+    
+    let salt = this.base64ToArray(b64Salt);
+    let iv = this.base64ToArray(b64iv);
+    let data = this.base64ToArray(b64data);
+
+    let decrypted;
+    
+    
+    // 2.) generate shared secret for HKDF
+    //
+    let sharedSecret = await this._crypto.subtle.deriveBits({ 
+      "name": "ECDH", 
+      "namedCurve": "P-256", 
+      "public": publicKey 
+    },privateKey,256);
+    
+    // 3.) convert shared-secret into a key
+    //
+    let sharedSecretKey = await this._crypto.subtle.importKey(
+      "raw", sharedSecret, 
+      { "name": 'HKDF' }, 
+      false, 
+      ['deriveKey','deriveBits']
+    );
+    
+    // 4.) convert the live-shared-secret-key into an aes key
+    //
+    let derivedKey = await this._crypto.subtle.deriveBits({
+      "name": 'HKDF', 
+      "hash": 'SHA-256', 
+      "salt": salt,
+      "info": new Uint8Array([])},
+      sharedSecretKey,256
+    );
+
+    //
+    // 5.) 
+    //     Convert the Key-Array to a live Key
+    let aes_key = await this._crypto.subtle.importKey(
+      "raw",
+      derivedKey,
+      "AES-GCM",
+      false,
+      ["encrypt","decrypt"]
+    );
+
+    // 6.) decrypt our data
+    //
+    let aes_data;
+    try{
+        aes_data = await this._crypto.subtle.decrypt(
+        { name: "AES-GCM", iv: iv },
+        aes_key,
+        data
+      );
+    } catch(e){
+      console.log({name: e.name, stack: e.stack, message: e.message});
+      throw e;
+    }
+
+    if(!returnText){
+      return aes_data;
+    } else {
+      decrypted = new Uint8Array(aes_data);
+      decrypted = new TextDecoder().decode(decrypted);
+      return decrypted;
+    }
+
+  };
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  // //////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////
+  //
+  // Function:     EcMakeSigKeys (async)
+  // What is this: Given
+  //
+  // Arguments:    none
+  //
+  // Returns:      object containing public and private key pair
+  // Notes:
+  //
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  
+  EcMakeSigKeys = async (exportable = true) => {
+    await this._sleep(0);
+
+  // Step 1) Create ECDSA KeyS
+    let keys = await this._crypto.subtle.generateKey(
+      { name: "ECDSA", namedCurve: "P-256" },
+      exportable,
+      ["sign","verify"]
+    );
+    
+    let b64Keys;
+
+  // Step 2a) IF EXTRACTABLE: Export keys to SPKI|PKCS8 format
+    if(exportable){
+      b64Keys = await Promise.all([
+        this._crypto.subtle.exportKey("spki", keys.publicKey).then((key) => {
+          return this.arrayToBase64(new Uint8Array(key));
+        }),
+        this._crypto.subtle.exportKey("pkcs8", keys.privateKey).then((key) => {
+          return this.arrayToBase64(new Uint8Array(key));
+        })
+      ]);
+      
+      return { publicKey: b64Keys[0], privateKey: b64Keys[1] };
+
+    } else {
+      
+  // Step 2b) NOT NOT NOT EXTRACTABLE: Export just the public key
+      b64Keys = await Promise.all([
+        this._crypto.subtle.exportKey("spki", keys.publicKey).then((key) => {
+          return this.arrayToBase64(new Uint8Array(key));
+        })
+      ]);
+      return { publicKey: b64Keys[0], privateKey: keys.privateKey };
+    }
+
+  };
+  
+  
+  
+  // //////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////
+  //
+  // Function:     EcSignData (async)
+  // What is this: Create a crypto-signature from a private key and data
+  //
+  // Arguments:    base64privateKey: string;
+  //               data: Uint8Array;
+  //
+  // Returns:      base64 encoded signature
+  // Notes:
+  //
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+  EcSignData = async (b64PrivateKey, b64data) => {
+    await this._sleep(0);
+
+    // 1.) convert the given keys to real keys
+    let privateKey = await this.EcdsaConvertKey(b64PrivateKey);
+
+    // 2.) sign the data with the live key
+    let signature = await this._crypto.subtle.sign({"name": "ECDSA", "hash": {"name": "SHA-256"}}, privateKey, this.base64ToArray(b64data));
+
+    // 3.) Base64 and return our data...
+    return  await this.arrayToBase64(new Uint8Array(signature));
+  
+  };
+  
+  
+  // //////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////
+  //
+  // Function:     EcVerifySig (async)
+  // What is this: Given a public key, some data, and a signature; prove the
+  //               signature came from the data and the public key
+  //
+  // Arguments:    base64PublicKey: string;
+  //               data: Uint8Array;
+  //
+  // Returns:      base64 encoded signature
+  // Notes:
+  //
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+  EcVerifySig = async (b64PublicKey, b64Signature, b64data) => {
+    await this._sleep(0);
+
+    // 1.) convert the given keys to real keys
+    let publicKey = await this.EcdsaConvertKey(b64PublicKey);
+    
+
+    // 2.) Convert the signature to an array
+    let signature = this.base64ToArray(b64Signature);
+
+    // 3.) verify the data with the live key
+    return await this._crypto.subtle.verify({"name": "ECDSA", "hash": {"name": "SHA-256"}}, publicKey, signature, this.base64ToArray(b64data));
+
+  };
+  
+  
+  
+  
+  
+  
+  
+  // //////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////
+  //
+  // Function:     EzConvertKey (base64key)
+  // What is this: Sloppy AF function to try converting random data into a key
+  //               until something works...
+  //
+  // Arguments:    none
+  //
+  // Returns:      hopefully a live key...probably an error and an hour of debugging.
+  // Notes:
+  //
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  
+  
+  
+  EcdhConvertKey = async (unknown_key) => {
+    await this._sleep(0);
+
+    let key;
+    let longKey;
+    
+    // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+    // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+    // NATURAL KEY
+    if(unknown_key instanceof this._crypto.CryptoKey){
+      return unknown_key;
+    }
+    //
+    //
+    // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+    // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+    // SPKI PUBLIC?
+    //
+    //
+    try {
+      key = await this._crypto.subtle.importKey(
+        "spki",
+        this.base64ToArray(unknown_key),
+        { name: "ECDH", namedCurve: "P-256" },
+        true,
+        []
+      );
+      return key;
+
+    } catch(e){} // DO NOTHING!!!
+    //
+    //
+    // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+    // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+    // RAW PUBLIC
+    //
+    //
+    try {
+      key = await this._crypto.subtle.importKey(
+        "raw",
+        this.base64ToArray(unknown_key),
+        { name: "ECDH", namedCurve: "P-256" },
+        true,
+        []
+      );
+      return key;
+      
+    } catch(e){} // DO NOTHING!!!
+    //
+    //
+    // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+    // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+    // PKCS8 PRIVATE
+    //
+    //
+    try{
+      key = await this._crypto.subtle.importKey(
+        "pkcs8",
+        this.base64ToArray(unknown_key),
+        { name: "ECDH", namedCurve: "P-256" },
+        false,
+        ["deriveKey","deriveBits"]
+      );
+      return key;
+      
+    } catch(e){} // DO NOTHING!!!
+    //
+    //
+    // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+    // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+    // RAW PUBLIC - PERVERTED
+    //
+    //
+    try {
+      
+      longKey = new Uint8Array([4].concat(Array.from(this.base64ToArray(unknown_key))));
+      key = await this._crypto.subtle.importKey(
+        "raw",
+        longKey,
+        { name: "ECDH", namedCurve: "P-256" },
+        true,
+        []
+      );
+      return key;
+      
+    } catch(e){
+      throw new Error("UNRECOGNIZED KEY FORMAT");
+    }
+
+
+
+  }
+
+
+
+
+  // //////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////
+  //
+  // Function:     EcdsaConvertKey (some sort of key)
+  // What is this: Sloppy AF function to try converting random data into a key
+  //               until something works...
+  //
+  // Arguments:    none
+  //
+  // Returns:      hopefully a live key...probably an error and an hour of debugging.
+  // Notes:
+  //
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  
+  EcdsaConvertKey = async (unknown_key) => {
+    await this._sleep(0);
+
+    let key;
+    let longKey;
+    let err = true;
+    
+    
+    // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+    // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+    // NATURAL KEY
+    if(unknown_key instanceof this._crypto.CryptoKey){
+      return unknown_key;
+    }
+    
+    
+    //
+    //
+    // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+    // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+    // SPKI PUBLIC?
+    //
+    //
+    try {
+      
+      key = await this._crypto.subtle.importKey(
+        "spki",
+        this.base64ToArray(unknown_key),
+        { name: "ECDSA", namedCurve: "P-256" },
+        true,
+        ["verify"]
+      );
+      
+      return key;
+      
+    } catch(e){} // DO NOTHING!
+
+    //
+    //
+    // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+    // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+    // RAW PUBLIC
+    //
+    //
+    try {
+      
+      key = await this._crypto.subtle.importKey(
+        "raw",
+        this.base64ToArray(unknown_key),
+        { name: "ECDSA", namedCurve: "P-256" },
+        true,
+        ["verify"]
+      );
+
+      return key;
+      
+    } catch(e){} // DO NOTHING!
+
+    //
+    //
+    // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+    // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+    // PKCS8 PRIVATE
+    //
+    //
+    try{
+
+      key = await this._crypto.subtle.importKey(
+        "pkcs8",
+        this.base64ToArray(unknown_key),
+        { name: "ECDSA", namedCurve: "P-256" },
+        false,
+        ["sign"]
+      );
+
+      return key;
+      
+    } catch(e){} // DO NOTHING
+
+    //
+    //
+    // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+    // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+    // RAW PUBLIC - PERVERTED
+    //
+    //
+    try {
+
+      longKey = new Uint8Array([4].concat(Array.from(this.base64ToArray(unknown_key))));
+      key = await this._crypto.subtle.importKey(
+        "raw",
+        longKey,
+        { name: "ECDSA", namedCurve: "P-256" },
+        true,
+        ["sign"]
+      );
+
+      return key;
+      
+    } catch(e){
+      throw new Error("UNRECOGNIZED KEY FORMAT");
+    }
+
+  }
+
+  
+  
+}
+// \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+// \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+// \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+
+--- File: jest.config.mjs ---
 (Skipped (non-matching extension))
 
 
@@ -221,11 +1713,11 @@ declare module "@justinwwolcott/ez-web-crypto" {
 
 
 --- File: package-lock.json ---
-(Skipped (non-matching extension))
+(Excluded)
 
 
 --- File: package.json ---
-(Skipped (non-matching extension))
+(Excluded)
 
 
 --- File: src/crypto/aes.ts ---
@@ -1136,9 +2628,11 @@ import {
     describe('Basic Operations', () => {
       test('HASH should generate consistent SHA-256 hashes', async () => {
         const testData = 'test data';
+        const actual = 'kW8AJ6V1B0znKjMXd8NHjWUT94alkb2JLaGld78jNfk='
         const hash1 = await HASH('SHA-256', testData);
         const hash2 = await HASH('SHA-256', testData);
         expect(hash1).toBe(hash2);
+        expect(hash1).toBe(actual)
       });
   
       test('HMAC should generate valid signatures', async () => {
@@ -1148,6 +2642,16 @@ import {
         expect(signature).toBeTruthy();
         expect(typeof signature).toBe('string');
       });
+
+      test('HMAC should align with the real world', async () => {
+
+        const secret = 'secret key';
+        const data = 'test data';
+        const signature = 'd51c4289e6eea49db00925bb7a948d31309550040f88bc4aba39bb3107c071be'
+        const results = await HMAC(secret,data);
+        expect(signature).toEqual(results)
+
+      })
     });
   
     describe('AES Operations', () => {
@@ -1255,4 +2759,34 @@ import {
 
 
 --- File: tsconfig.json ---
-(Skipped (non-matching extension))
+
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "commonjs",
+    "lib": ["es2020", "dom"],
+    "declaration": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": false,
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "experimentalDecorators": true,
+    "strictPropertyInitialization": false,
+    "typeRoots": ["./node_modules/@types"],
+    "types": ["node"],
+    "allowJs": true,
+    "outDir": "dist",
+    "rootDir": "src",
+    "esModuleInterop": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "cdk.out"]
+}
+
