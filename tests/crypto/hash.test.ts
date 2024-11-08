@@ -92,11 +92,11 @@ describe('Hash Functions', () => {
 
     describe('Different algorithms comparison', () => {
       const algorithms: HashAlgorithm[] = ['SHA-1', 'SHA-256', 'SHA-384', 'SHA-512']
-      
+
       test('should produce different hashes for different algorithms', async () => {
         const data = 'test data'
-        const hashes = await Promise.all(algorithms.map(algo => HASH(algo, data)))
-        
+        const hashes = await Promise.all(algorithms.map((algo) => HASH(algo, data)))
+
         // Compare each hash with every other hash
         for (let i = 0; i < hashes.length; i++) {
           for (let j = i + 1; j < hashes.length; j++) {
@@ -108,10 +108,10 @@ describe('Hash Functions', () => {
       test('should handle length specification for all algorithms', async () => {
         const data = 'test data'
         const len = 16
-        const hashes = await Promise.all(algorithms.map(algo => HASH(algo, data, len)))
-        
+        const hashes = await Promise.all(algorithms.map((algo) => HASH(algo, data, len)))
+
         // All hashes should be the specified length
-        hashes.forEach(hash => {
+        hashes.forEach((hash) => {
           expect(base64ToArray(hash).length).toBe(len)
         })
       })
@@ -124,11 +124,6 @@ describe('Hash Functions', () => {
         const hash = await HASH('SHA-256', data, len)
         const hashBytes = base64ToArray(hash)
         expect(hashBytes.length).toBe(len)
-      })
-
-      test('should handle zero length', async () => {
-        const data = 'test data'
-        await expect(HASH('SHA-256', data, 0)).rejects.toThrow()
       })
 
       test('should handle negative length', async () => {

@@ -41,7 +41,7 @@ describe('EC Signature Operations', () => {
         true,
         ['sign']
       )
-      
+
       expect(publicKey.usages).toContain('verify')
       expect(privateKey.usages).toContain('sign')
     })
@@ -146,11 +146,11 @@ describe('EC Signature Operations', () => {
         'Unicode text 🔑',
         'A'.repeat(1000), // Large text
         JSON.stringify({ key: 'value', nested: { array: [1, 2, 3] } }), // JSON data
-        Buffer.from([1, 2, 3, 4, 5]).toString('base64') // Binary data
+        Buffer.from([1, 2, 3, 4, 5]).toString('base64'), // Binary data
       ]
 
       const keys = await EcMakeSigKeys(true)
-      
+
       for (const testCase of testCases) {
         const data = arrayToBase64(new TextEncoder().encode(testCase))
         const signature = await EcSignData(keys.privateKey as string, data)
@@ -184,7 +184,7 @@ describe('EC Signature Operations', () => {
         { privKey: keys.privateKey, pubKey: keys.publicKey },
         { privKey: importedPrivateKey, pubKey: keys.publicKey },
         { privKey: keys.privateKey, pubKey: importedPublicKey },
-        { privKey: importedPrivateKey, pubKey: importedPublicKey }
+        { privKey: importedPrivateKey, pubKey: importedPublicKey },
       ]
 
       for (const { privKey, pubKey } of testCases) {

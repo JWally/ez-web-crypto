@@ -9,26 +9,26 @@ export default {
   },
   transformIgnorePatterns: ['/node_modules/(?!(your-package-name)/)'],
   testEnvironment: 'node',
-  "coverageThreshold": {
-    "global": {
-      "branches": 80,
-      "functions": 80,
-      "statements": 80
-    }
+  coverageThreshold: {
+    global: {
+      branches: 80,
+      functions: 80,
+      statements: 80,
+    },
   },
-  "clearMocks": true,
-  "collectCoverage": true,
-  "coverageDirectory": "coverage",
-  "errorOnDeprecated": true,
-  "verbose": true,
-  "reporters": [
-    "default",
+  clearMocks: true,
+  collectCoverage: true,
+  coverageDirectory: 'coverage',
+  errorOnDeprecated: true,
+  verbose: true,
+  reporters: [
+    'default',
     [
-      "jest-junit",
+      'jest-junit',
       {
-        "outputDirectory": "coverage",
-        "outputName": "unitTestReport.xml"
-      }
-    ]
-  ]
+        outputDirectory: 'coverage',
+        outputName: 'unitTestReport.xml',
+      },
+    ],
+  ],
 }

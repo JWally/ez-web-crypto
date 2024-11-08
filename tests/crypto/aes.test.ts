@@ -22,7 +22,7 @@ describe('AES Cryptographic Operations', () => {
     })
 
     test('generated key should have correct usage rights', async () => {
-      const key = await AESMakeKey(false) as CryptoKey
+      const key = (await AESMakeKey(false)) as CryptoKey
       expect(key.usages).toContain('encrypt')
       expect(key.usages).toContain('decrypt')
       expect(key.usages.length).toBe(2)
@@ -61,7 +61,7 @@ describe('AES Cryptographic Operations', () => {
       const key = await AESMakeKey(true)
       const data = arrayToBase64(new TextEncoder().encode('test data'))
       const result = await AESEncrypt(key, data)
-      
+
       expect(result).toHaveProperty('ciphertext')
       expect(result).toHaveProperty('iv')
       expect(base64ToArray(result.iv).length).toBe(16) // IV should be 16 bytes
@@ -72,7 +72,7 @@ describe('AES Cryptographic Operations', () => {
       const data = arrayToBase64(new TextEncoder().encode('test data'))
       const customIV = arrayToBase64(new Uint8Array(16))
       const result = await AESEncrypt(key, data, customIV)
-      
+
       expect(result.iv).toBe(customIV)
       expect(result.ciphertext).toBeTruthy()
     })
@@ -82,7 +82,7 @@ describe('AES Cryptographic Operations', () => {
       const data = arrayToBase64(new TextEncoder().encode('test data'))
       const result1 = await AESEncrypt(key, data)
       const result2 = await AESEncrypt(key, data)
-      
+
       expect(result1.ciphertext).not.toBe(result2.ciphertext)
       expect(result1.iv).not.toBe(result2.iv)
     })
@@ -91,7 +91,7 @@ describe('AES Cryptographic Operations', () => {
       const key = await AESMakeKey(false)
       const data = arrayToBase64(new TextEncoder().encode('test data'))
       const result = await AESEncrypt(key, data)
-      
+
       expect(result.ciphertext).toBeTruthy()
       expect(result.iv).toBeTruthy()
     })
@@ -104,7 +104,7 @@ describe('AES Cryptographic Operations', () => {
       const data = arrayToBase64(new TextEncoder().encode(originalText))
       const encrypted = await AESEncrypt(key, data)
       const decrypted = await AESDecrypt(key, encrypted.iv, encrypted.ciphertext, true)
-      
+
       expect(decrypted).toBe(originalText)
     })
 
@@ -114,7 +114,7 @@ describe('AES Cryptographic Operations', () => {
       const data = arrayToBase64(new TextEncoder().encode(originalText))
       const encrypted = await AESEncrypt(key, data)
       const decrypted = await AESDecrypt(key, encrypted.iv, encrypted.ciphertext, false)
-      
+
       expect(decrypted).toBeInstanceOf(ArrayBuffer)
       expect(new TextDecoder().decode(new Uint8Array(decrypted as ArrayBuffer))).toBe(originalText)
     })
@@ -125,7 +125,7 @@ describe('AES Cryptographic Operations', () => {
       const data = arrayToBase64(new TextEncoder().encode('test data'))
       const encrypted = await AESEncrypt(exportableKey, data)
       const decrypted = await AESDecrypt(importedKey, encrypted.iv, encrypted.ciphertext, true)
-      
+
       expect(decrypted).toBe('test data')
     })
 
@@ -133,7 +133,7 @@ describe('AES Cryptographic Operations', () => {
       const key = await AESMakeKey(true)
       const invalidCiphertext = arrayToBase64(new Uint8Array([1, 2, 3]))
       const validIV = arrayToBase64(new Uint8Array(16))
-      
+
       await expect(AESDecrypt(key, validIV, invalidCiphertext, true)).rejects.toThrow()
     })
 
@@ -142,7 +142,7 @@ describe('AES Cryptographic Operations', () => {
       const data = arrayToBase64(new TextEncoder().encode('test data'))
       const encrypted = await AESEncrypt(key, data)
       const invalidIV = arrayToBase64(new Uint8Array([1, 2, 3])) // Wrong size IV
-      
+
       await expect(AESDecrypt(key, invalidIV, encrypted.ciphertext, true)).rejects.toThrow()
     })
   })
@@ -154,11 +154,11 @@ describe('AES Cryptographic Operations', () => {
         'Unicode text 🔐',
         'A'.repeat(1000), // Large text
         JSON.stringify({ key: 'value', nested: { array: [1, 2, 3] } }), // JSON data
-        Buffer.from([1, 2, 3, 4, 5]).toString('base64') // Binary data
+        Buffer.from([1, 2, 3, 4, 5]).toString('base64'), // Binary data
       ]
 
       const key = await AESMakeKey(true)
-      
+
       for (const testCase of testCases) {
         const data = arrayToBase64(new TextEncoder().encode(testCase))
         const encrypted = await AESEncrypt(key, data)
