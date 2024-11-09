@@ -1,90 +1,160 @@
 ![image](https://github.com/JWally/ez-web-crypto/assets/2482935/0e2faf24-2c5e-416f-b9e3-e75fe2080569)
 
-A JavaScript library providing an easy interface for working with subtle crypto.
+[![npm version](https://badge.fury.io/js/@justinwwolcott%2Fez-web-crypto.svg)](https://www.npmjs.com/package/@justinwwolcott/ez-web-crypto)
+[![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
+[![Node.js Version](https://img.shields.io/node/v/@justinwwolcott/ez-web-crypto.svg)](https://nodejs.org/)
 
-## Description
-
-`EZ_WEB_CRYPTO` is a class designed to simplify interactions with the Web Crypto API. It offers a straightforward approach to performing common cryptographic operations such as encoding, decoding, encryption, and decryption in both browser and Node.js environments.
+A lightweight, type-safe wrapper around the Web Crypto API, providing easy-to-use cryptographic operations for both browser and Node.js environments.
 
 ## Features
 
-- Automatic environment detection (Browser/Node.js)
-- Base64 and Uint8Array conversions
-- HMAC generation
-- Data hashing with SHA algorithms
-- Password-based encryption and decryption
-- AES key generation, encryption, and decryption
-- Elliptic Curve Cryptography (ECC) for key generation, encryption, decryption, and digital signature operations
-- HKDF for key derivation and encryption/decryption operations
+- 🔐 AES-GCM encryption/decryption
+- 🔑 ECDH encryption/decryption
+- ✍️ ECDSA digital signature/verification
+- 🔒 Password-based encryption
+- #️⃣ HMAC operations
+- 🧮 Cryptographic hashing (SHA-1, SHA-256, SHA-384, SHA-512)
+- 📱 Works in both browser and Node.js environments
+- 📘 Full TypeScript support
 
 ## Installation
 
-To use `EZ_WEB_CRYPTO` in your project, simply import it:
-
-```javascript
-import EZ_WEB_CRYPTO from 'ez-web-crypto'
+```bash
+npm install @justinwwolcott/ez-web-crypto
 ```
 
 ## Usage
 
-### Initialization
+### AES Encryption
 
-```javascript
-const ezWebCrypto = new EZ_WEB_CRYPTO()
+```typescript
+import { AESMakeKey, AESEncrypt, AESDecrypt } from '@justinwwolcott/ez-web-crypto';
+
+// Generate a new AES key
+const key = await AESMakeKey();
+
+// Encrypt data
+const encrypted = await AESEncrypt(key, btoa('Hello, World!'));
+
+// Decrypt data
+const decrypted = await AESDecrypt(key, encrypted.iv, encrypted.ciphertext, true);
+console.log(decrypted); // 'Hello, World!'
 ```
 
-### Conversions
+### ECDH Key Exchange
 
-- Base64 to Uint8Array: `ezWebCrypto.base64ToArray(base64String)`
-- Uint8Array to Base64: `ezWebCrypto.arrayToBase64(arrayBuffer)`
+```typescript
+import { EcMakeCryptKeys, EcEncrypt, EcDecrypt } from '@justinwwolcott/ez-web-crypto';
 
-### HMAC Generation
+// Generate key pairs for both parties
+const aliceKeys = await EcMakeCryptKeys();
+const bobKeys = await EcMakeCryptKeys();
 
-```javascript
-const hmac = await ezWebCrypto.HMAC(secret, data)
+// Alice encrypts message for Bob
+const encrypted = await EcEncrypt(
+  aliceKeys.privateKey,
+  bobKeys.publicKey,
+  btoa('Secret message')
+);
+
+// Bob decrypts message from Alice
+const decrypted = await EcDecrypt(
+  bobKeys.privateKey,
+  aliceKeys.publicKey,
+  encrypted.iv,
+  encrypted.ciphertext,
+  true
+);
 ```
 
-### Data Hashing
+### Digital Signatures
 
-```javascript
-const hash = await ezWebCrypto.HASH(algo, data, len)
+```typescript
+import { EcMakeSigKeys, EcSignData, EcVerifySig } from '@justinwwolcott/ez-web-crypto';
+
+// Generate signing keys
+const keys = await EcMakeSigKeys();
+
+// Sign data
+const signature = await EcSignData(keys.privateKey, btoa('Sign this message'));
+
+// Verify signature
+const isValid = await EcVerifySig(
+  keys.publicKey,
+  signature,
+  btoa('Sign this message')
+);
 ```
 
-### Password-based Encryption and Decryption
+### Password-Based Encryption
 
-- Encrypt: `ezWebCrypto.PASSWORD_ENCRYPT(password, data)`
-- Decrypt: `ezWebCrypto.PASSWORD_DECRYPT(password, encryptedData)`
+```typescript
+import { PASSWORD_ENCRYPT, PASSWORD_DECRYPT } from '@justinwwolcott/ez-web-crypto';
+
+// Encrypt with password
+const encrypted = await PASSWORD_ENCRYPT('myPassword', btoa('Secret data'));
+
+// Decrypt with password
+const decrypted = await PASSWORD_DECRYPT('myPassword', encrypted);
+```
+
+### Hashing
+
+```typescript
+import { HASH } from '@justinwwolcott/ez-web-crypto';
+
+const hash = await HASH('SHA-256', 'Hash this text');
+```
+
+## API Reference
 
 ### AES Operations
+- `AESMakeKey(exportable?: boolean): Promise<Base64String | CryptoKey>`
+- `AESEncrypt(key: Base64String | CryptoKey, data: Base64String, nonce?: Base64String): Promise<AESEncryptResult>`
+- `AESDecrypt(key: Base64String | CryptoKey, nonce: Base64String, data: Base64String, returnText?: boolean): Promise<string | ArrayBuffer>`
 
-- Key Generation: `ezWebCrypto.AESMakeKey(exportable)`
-- Key Import: `ezWebCrypto.AESImportKey(key, exportable)`
-- Encryption: `ezWebCrypto.AESEncrypt(key, data, nonce)`
-- Decryption: `ezWebCrypto.AESDecrypt(key, nonce, data, returnText)`
+### ECDH Operations
+- `EcMakeCryptKeys(exportable?: boolean): Promise<ECKeyPair>`
+- `EcEncrypt(privateKey: Base64String | CryptoKey, publicKey: Base64String | CryptoKey, data: Base64String): Promise<AESEncryptResult>`
+- `EcDecrypt(privateKey: Base64String | CryptoKey, publicKey: Base64String | CryptoKey, nonce: Base64String, data: Base64String, returnText?: boolean): Promise<string | ArrayBuffer>`
 
-### ECC Operations
+### Digital Signatures
+- `EcMakeSigKeys(exportable?: boolean): Promise<ECSignatureKeyPair>`
+- `EcSignData(privateKey: Base64String | CryptoKey, data: Base64String): Promise<Base64String>`
+- `EcVerifySig(publicKey: Base64String | CryptoKey, signature: Base64String, data: Base64String): Promise<boolean>`
 
-- Key Generation: `ezWebCrypto.EcMakeCryptKeys(exportable)`
-- Encryption: `ezWebCrypto.EcEncrypt(privateKey, publicKey, data)`
-- Decryption: `ezWebCrypto.EcDecrypt(privateKey, publicKey, nonce, data, returnText)`
-- Signature Generation: `ezWebCrypto.EcMakeSigKeys(exportable)`
-- Data Signing: `ezWebCrypto.EcSignData(privateKey, data)`
-- Signature Verification: `ezWebCrypto.EcVerifySig(publicKey, signature, data)`
+### Password Operations
+- `PASSWORD_ENCRYPT(password: string, data: Base64String): Promise<Base64String>`
+- `PASSWORD_DECRYPT(password: string, data: Base64String): Promise<string>`
 
-### HKDF Operations
+### Hashing Operations
+- `HASH(algorithm: HashAlgorithm, data: string, length?: number): Promise<Base64String>`
+- `HMAC(secret: string, data: string): Promise<HexString>`
 
-- Encryption: `ezWebCrypto.HKDFEncrypt(privateKey, publicKey, data)`
-- Decryption: `ezWebCrypto.HKDFDecrypt(privateKey, publicKey, salt, iv, data, returnText)`
+## Environment Support
 
-### Key Conversion Utilities
+- Node.js ≥ 14.0.0
+- Modern browsers with Web Crypto API support
+- TypeScript support included
 
-- `ezWebCrypto.EcdhConvertKey(key)`
-- `ezWebCrypto.EcdsaConvertKey(key)`
+## Contributing
 
-## Contributions
+Contributions are welcome! Please feel free to submit a Pull Request. Make sure to read the contributing guidelines before submitting your PR.
 
-Contributions are welcome. Please ensure that your code adheres to the existing coding standards.
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ## License
 
-MIT
+This project is licensed under the ISC License - see the [LICENSE](LICENSE) file for details.
+
+## Author
+
+Justin W. Wolcott
+
+## Support
+
+If you encounter any problems or have questions, please [open an issue](https://github.com/JWally/ez-web-crypto/issues) on GitHub.
