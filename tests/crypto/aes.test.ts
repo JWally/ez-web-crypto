@@ -1,6 +1,6 @@
 import { AESMakeKey, AESImportKey, AESEncrypt, AESDecrypt } from '../../src/crypto/aes'
 import { initializeCrypto } from '../../src/crypto/init'
-import { arrayToBase64, base64ToArray } from '../../src/utils'
+import { arrayToBase64, base64ToArray } from '../../src/crypto/utils'
 import { describe, expect, test } from '@jest/globals'
 
 describe('AES Cryptographic Operations', () => {

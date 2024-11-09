@@ -1,5 +1,5 @@
 import { EcMakeCryptKeys, EcEncrypt, EcDecrypt } from '../../src/crypto/ec'
-import { arrayToBase64 } from '../../src/utils'
+import { arrayToBase64 } from '../../src/crypto/utils'
 import { describe, expect, test } from '@jest/globals'
 import type { ECKeyPair } from '../../src/crypto/types'
 
