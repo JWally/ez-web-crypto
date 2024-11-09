@@ -1,7 +1,6 @@
 import { initializeCrypto } from './init'
 import { EcdhConvertKey } from './key-conversion'
-import { sleep } from '../utils'
-import { base64ToArray, arrayToBase64 } from '../utils'
+import { base64ToArray, arrayToBase64,sleep } from './utils'
 
 import type { Base64String, HKDFEncryptResult } from './types'
 

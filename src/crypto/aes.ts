@@ -1,8 +1,8 @@
 // aes.ts
 import { initializeCrypto } from './init'
-import { arrayToBase64, base64ToArray } from '../utils'
+import { arrayToBase64, base64ToArray } from './utils'
 import { Base64String, AESEncryptResult } from './types'
-import { sleep } from '../utils'
+import { sleep } from './utils'
 
 export const AESMakeKey = async (exportable: boolean = true): Promise<Base64String | CryptoKey> => {
   await sleep(0)

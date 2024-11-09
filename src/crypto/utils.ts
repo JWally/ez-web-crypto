@@ -1,4 +1,4 @@
-import type { Base64String } from '@/types/crypto'
+import type { Base64String } from "./types"
 export const base64ToArray = (strng: Base64String): Uint8Array => {
   return Uint8Array.from(atob(strng), (c) => c.charCodeAt(0))
 }

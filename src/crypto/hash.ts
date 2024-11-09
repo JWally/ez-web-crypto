@@ -1,6 +1,6 @@
 // hash.ts
 import { initializeCrypto } from './init'
-import { arrayToBase64 } from '../utils'
+import { arrayToBase64 } from './utils'
 import { HashAlgorithm, Base64String } from './types'
 
 export const HASH = async (algo: HashAlgorithm, data: string, len?: number): Promise<Base64String> => {

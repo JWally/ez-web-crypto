@@ -1,5 +1,5 @@
 export * from './crypto/types'
-export * from './utils'
+export * from './crypto/utils'
 export * from './crypto/hmac'
 export * from './crypto/hash'
 export * from './crypto/aes'

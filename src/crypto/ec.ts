@@ -1,6 +1,6 @@
 import type { Base64String, ECKeyPair, AESEncryptResult } from './types'
 
-import { arrayToBase64, base64ToArray, sleep } from '../utils'
+import { arrayToBase64, base64ToArray, sleep } from './utils'
 import { initializeCrypto } from './init'
 import { AESEncrypt } from './aes'
 

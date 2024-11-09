@@ -1,7 +1,7 @@
 import type { Base64String, ECSignatureKeyPair } from './types'
 
 import { EcdsaConvertKey } from './key-conversion'
-import { sleep, arrayToBase64, base64ToArray } from '../utils'
+import { sleep, arrayToBase64, base64ToArray } from './utils'
 import { initializeCrypto } from './init'
 
 export const EcMakeSigKeys = async (exportable: boolean = true): Promise<ECSignatureKeyPair> => {
