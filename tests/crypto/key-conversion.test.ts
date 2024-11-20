@@ -1,7 +1,7 @@
+import { describe, expect, test } from '@jest/globals'
 import { EcdhConvertKey, EcdsaConvertKey } from '../../src/crypto/key-conversion'
 import { EcMakeCryptKeys, EcMakeSigKeys } from '../../src'
 import { initializeCrypto } from '../../src/crypto/init'
-import { describe, expect, test } from '@jest/globals'
 
 describe('Key Conversion Operations', () => {
   describe('EcdhConvertKey', () => {

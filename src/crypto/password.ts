@@ -2,6 +2,7 @@ import type { Base64String } from './types'
 import { AESMakeKey, AESDecrypt, AESEncrypt, AESImportKey } from './aes'
 import { HASH } from './hash'
 import { sleep } from './utils'
+
 const iterations = 5_000
 
 export const PASSWORD_ENCRYPT = async (password: string, base64data: Base64String): Promise<Base64String> => {

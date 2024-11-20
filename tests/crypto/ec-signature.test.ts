@@ -1,6 +1,6 @@
+import { describe, expect, test } from '@jest/globals'
 import { EcMakeSigKeys, EcSignData, EcVerifySig } from '../../src/crypto/ec-signature'
 import { arrayToBase64 } from '../../src/crypto/utils'
-import { describe, expect, test } from '@jest/globals'
 import type { ECSignatureKeyPair } from '../../src/crypto/types'
 
 describe('EC Signature Operations', () => {

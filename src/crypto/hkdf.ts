@@ -1,6 +1,6 @@
 import { initializeCrypto } from './init'
 import { EcdhConvertKey } from './key-conversion'
-import { base64ToArray, arrayToBase64,sleep } from './utils'
+import { base64ToArray, arrayToBase64, sleep } from './utils'
 
 import type { Base64String, HKDFEncryptResult } from './types'
 
@@ -41,7 +41,7 @@ export const HKDFEncrypt = async (
     {
       name: 'HKDF',
       hash: 'SHA-256',
-      salt: salt,
+      salt,
       info: new Uint8Array([]),
     },
     sharedSecretKey,
@@ -55,7 +55,7 @@ export const HKDFEncrypt = async (
   const iv = crypto.getRandomValues(new Uint8Array(16))
 
   // Encrypt
-  const encrypted = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv }, aes_key, base64ToArray(b64data))
+  const encrypted = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, aes_key, base64ToArray(b64data))
 
   return {
     ciphertext: arrayToBase64(new Uint8Array(encrypted)),
@@ -103,7 +103,7 @@ export const HKDFDecrypt = async (
     {
       name: 'HKDF',
       hash: 'SHA-256',
-      salt: salt,
+      salt,
       info: new Uint8Array([]),
     },
     sharedSecretKey,
@@ -114,7 +114,7 @@ export const HKDFDecrypt = async (
   const aes_key = await crypto.subtle.importKey('raw', derivedKey, 'AES-GCM', false, ['encrypt', 'decrypt'])
 
   try {
-    const aes_data = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: iv }, aes_key, data)
+    const aes_data = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, aes_key, data)
 
     if (!returnText) {
       return aes_data

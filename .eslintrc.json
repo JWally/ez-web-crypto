@@ -43,14 +43,14 @@
   },
   "overrides": [
     {
-      "files": ["src/**/*.ts"],            // Add TypeScript files pattern
+      "files": ["src/**/*.ts","tests/**/*.ts"],            // Add TypeScript files pattern
       "parser": "@typescript-eslint/parser",
       "parserOptions": {
-        "project": "./tsconfig.json"
+        "project": "./tsconfig.base.json"
       }
     },
     {
-      "files": ["test/**"],
+      "files": ["tests/**"],
       "plugins": ["jest"],
       "extends": ["plugin:jest/recommended"],
       "rules": {

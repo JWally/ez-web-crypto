@@ -1,3 +1,4 @@
+import { describe, expect, test } from '@jest/globals'
 import {
   HASH,
   HMAC,
@@ -15,8 +16,6 @@ import {
   EcSignData,
   EcVerifySig,
 } from '../src'
-
-import { describe, expect, test } from '@jest/globals'
 
 describe('Cryptographic Operations', () => {
   describe('Basic Operations', () => {

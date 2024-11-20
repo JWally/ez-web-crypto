@@ -1,8 +1,7 @@
 // aes.ts
 import { initializeCrypto } from './init'
-import { arrayToBase64, base64ToArray } from './utils'
+import { arrayToBase64, base64ToArray, sleep } from './utils'
 import { Base64String, AESEncryptResult } from './types'
-import { sleep } from './utils'
 
 export const AESMakeKey = async (exportable: boolean = true): Promise<Base64String | CryptoKey> => {
   await sleep(0)
@@ -28,9 +27,8 @@ export const AESImportKey = async (
   const { crypto, CryptoKey } = await initializeCrypto()
 
   // Type guard for CryptoKey
-  const isCryptoKey = (key: Base64String | CryptoKey): key is CryptoKey => {
-    return typeof key === 'object' && key !== null && 'type' in key && 'algorithm' in key
-  }
+  const isCryptoKey = (key: Base64String | CryptoKey): key is CryptoKey =>
+    typeof key === 'object' && key !== null && 'type' in key && 'algorithm' in key
 
   if (isCryptoKey(aes_key)) {
     return aes_key

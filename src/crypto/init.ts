@@ -1,4 +1,5 @@
 import type { CryptoContext } from './types'
+
 export const initializeCrypto = async (): Promise<CryptoContext> => {
   let cryptoAPI: CryptoContext
 

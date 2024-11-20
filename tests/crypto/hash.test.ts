@@ -1,6 +1,6 @@
+import { describe, expect, test } from '@jest/globals'
 import { HASH } from '../../src/crypto/hash'
 import { base64ToArray } from '../../src/crypto/utils'
-import { describe, expect, test } from '@jest/globals'
 import type { HashAlgorithm } from '../../src/crypto/types'
 
 describe('Hash Functions', () => {

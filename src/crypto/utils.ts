@@ -1,7 +1,6 @@
-import type { Base64String } from "./types"
-export const base64ToArray = (strng: Base64String): Uint8Array => {
-  return Uint8Array.from(atob(strng), (c) => c.charCodeAt(0))
-}
+import type { Base64String } from './types'
+
+export const base64ToArray = (strng: Base64String): Uint8Array => Uint8Array.from(atob(strng), (c) => c.charCodeAt(0))
 
 export const arrayToBase64 = (utf8Bytes: Uint8Array): Base64String => {
   const chunkSize = 8192

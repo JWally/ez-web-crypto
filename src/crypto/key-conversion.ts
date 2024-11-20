@@ -1,6 +1,6 @@
 import type { Base64String } from './types'
 import { initializeCrypto } from './init'
-import { base64ToArray , sleep} from './utils'
+import { base64ToArray, sleep } from './utils'
 
 // key-conversion.ts
 export const EcdhConvertKey = async (unknown_key: Base64String | CryptoKey): Promise<CryptoKey> => {

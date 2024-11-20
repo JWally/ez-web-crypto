@@ -16,5 +16,5 @@ export const HMAC = async (secret: string, data: string): Promise<HexString> => 
   const sig = await crypto.subtle.sign('HMAC', key, encodedData)
   const b = new Uint8Array(sig)
 
-  return Array.prototype.map.call(b, (x: number) => ('00' + x.toString(16)).slice(-2)).join('')
+  return Array.prototype.map.call(b, (x: number) => `00${x.toString(16)}`.slice(-2)).join('')
 }
