@@ -28,106 +28,97 @@ npm install @justinwwolcott/ez-web-crypto
 ### AES Encryption
 
 ```typescript
-import { AESMakeKey, AESEncrypt, AESDecrypt } from '@justinwwolcott/ez-web-crypto';
+import { AESMakeKey, AESEncrypt, AESDecrypt } from '@justinwwolcott/ez-web-crypto'
 
 // Generate a new AES key
-const key = await AESMakeKey();
+const key = await AESMakeKey()
 
 // Encrypt data
-const encrypted = await AESEncrypt(key, btoa('Hello, World!'));
+const encrypted = await AESEncrypt(key, btoa('Hello, World!'))
 
 // Decrypt data
-const decrypted = await AESDecrypt(key, encrypted.iv, encrypted.ciphertext, true);
-console.log(decrypted); // 'Hello, World!'
+const decrypted = await AESDecrypt(key, encrypted.iv, encrypted.ciphertext, true)
+console.log(decrypted) // 'Hello, World!'
 ```
 
 ### ECDH Key Exchange
 
 ```typescript
-import { EcMakeCryptKeys, EcEncrypt, EcDecrypt } from '@justinwwolcott/ez-web-crypto';
+import { EcMakeCryptKeys, EcEncrypt, EcDecrypt } from '@justinwwolcott/ez-web-crypto'
 
 // Generate key pairs for both parties
-const aliceKeys = await EcMakeCryptKeys();
-const bobKeys = await EcMakeCryptKeys();
+const aliceKeys = await EcMakeCryptKeys()
+const bobKeys = await EcMakeCryptKeys()
 
 // Alice encrypts message for Bob
-const encrypted = await EcEncrypt(
-  aliceKeys.privateKey,
-  bobKeys.publicKey,
-  btoa('Secret message')
-);
+const encrypted = await EcEncrypt(aliceKeys.privateKey, bobKeys.publicKey, btoa('Secret message'))
 
 // Bob decrypts message from Alice
-const decrypted = await EcDecrypt(
-  bobKeys.privateKey,
-  aliceKeys.publicKey,
-  encrypted.iv,
-  encrypted.ciphertext,
-  true
-);
+const decrypted = await EcDecrypt(bobKeys.privateKey, aliceKeys.publicKey, encrypted.iv, encrypted.ciphertext, true)
 ```
 
 ### Digital Signatures
 
 ```typescript
-import { EcMakeSigKeys, EcSignData, EcVerifySig } from '@justinwwolcott/ez-web-crypto';
+import { EcMakeSigKeys, EcSignData, EcVerifySig } from '@justinwwolcott/ez-web-crypto'
 
 // Generate signing keys
-const keys = await EcMakeSigKeys();
+const keys = await EcMakeSigKeys()
 
 // Sign data
-const signature = await EcSignData(keys.privateKey, btoa('Sign this message'));
+const signature = await EcSignData(keys.privateKey, btoa('Sign this message'))
 
 // Verify signature
-const isValid = await EcVerifySig(
-  keys.publicKey,
-  signature,
-  btoa('Sign this message')
-);
+const isValid = await EcVerifySig(keys.publicKey, signature, btoa('Sign this message'))
 ```
 
 ### Password-Based Encryption
 
 ```typescript
-import { PASSWORD_ENCRYPT, PASSWORD_DECRYPT } from '@justinwwolcott/ez-web-crypto';
+import { PASSWORD_ENCRYPT, PASSWORD_DECRYPT } from '@justinwwolcott/ez-web-crypto'
 
 // Encrypt with password
-const encrypted = await PASSWORD_ENCRYPT('myPassword', btoa('Secret data'));
+const encrypted = await PASSWORD_ENCRYPT('myPassword', btoa('Secret data'))
 
 // Decrypt with password
-const decrypted = await PASSWORD_DECRYPT('myPassword', encrypted);
+const decrypted = await PASSWORD_DECRYPT('myPassword', encrypted)
 ```
 
 ### Hashing
 
 ```typescript
-import { HASH } from '@justinwwolcott/ez-web-crypto';
+import { HASH } from '@justinwwolcott/ez-web-crypto'
 
-const hash = await HASH('SHA-256', 'Hash this text');
+const hash = await HASH('SHA-256', 'Hash this text')
 ```
 
 ## API Reference
 
 ### AES Operations
+
 - `AESMakeKey(exportable?: boolean): Promise<Base64String | CryptoKey>`
 - `AESEncrypt(key: Base64String | CryptoKey, data: Base64String, nonce?: Base64String): Promise<AESEncryptResult>`
 - `AESDecrypt(key: Base64String | CryptoKey, nonce: Base64String, data: Base64String, returnText?: boolean): Promise<string | ArrayBuffer>`
 
 ### ECDH Operations
+
 - `EcMakeCryptKeys(exportable?: boolean): Promise<ECKeyPair>`
 - `EcEncrypt(privateKey: Base64String | CryptoKey, publicKey: Base64String | CryptoKey, data: Base64String): Promise<AESEncryptResult>`
 - `EcDecrypt(privateKey: Base64String | CryptoKey, publicKey: Base64String | CryptoKey, nonce: Base64String, data: Base64String, returnText?: boolean): Promise<string | ArrayBuffer>`
 
 ### Digital Signatures
+
 - `EcMakeSigKeys(exportable?: boolean): Promise<ECSignatureKeyPair>`
 - `EcSignData(privateKey: Base64String | CryptoKey, data: Base64String): Promise<Base64String>`
 - `EcVerifySig(publicKey: Base64String | CryptoKey, signature: Base64String, data: Base64String): Promise<boolean>`
 
 ### Password Operations
+
 - `PASSWORD_ENCRYPT(password: string, data: Base64String): Promise<Base64String>`
 - `PASSWORD_DECRYPT(password: string, data: Base64String): Promise<string>`
 
 ### Hashing Operations
+
 - `HASH(algorithm: HashAlgorithm, data: string, length?: number): Promise<Base64String>`
 - `HMAC(secret: string, data: string): Promise<HexString>`
 

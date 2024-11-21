@@ -1,6 +1,5 @@
 import { describe, expect, test } from '@jest/globals'
 import { AESMakeKey, AESImportKey, AESEncrypt, AESDecrypt } from '../../src/crypto/aes'
-import { initializeCrypto } from '../../src/crypto/init'
 import { arrayToBase64, base64ToArray } from '../../src/crypto/utils'
 
 describe('AES Cryptographic Operations', () => {
@@ -159,12 +158,12 @@ describe('AES Cryptographic Operations', () => {
 
       const key = await AESMakeKey(true)
 
-      for (const testCase of testCases) {
+      testCases.forEach(async (testCase) => {
         const data = arrayToBase64(new TextEncoder().encode(testCase))
         const encrypted = await AESEncrypt(key, data)
         const decrypted = await AESDecrypt(key, encrypted.iv, encrypted.ciphertext, true)
         expect(decrypted).toBe(testCase)
-      }
+      })
     })
   })
 })

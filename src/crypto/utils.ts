@@ -15,5 +15,6 @@ export const arrayToBase64 = (utf8Bytes: Uint8Array): Base64String => {
 }
 
 export const sleep = async (duration: number): Promise<void> => {
+  // eslint-disable-next-line
   await new Promise((resolve) => setTimeout(resolve, duration))
 }

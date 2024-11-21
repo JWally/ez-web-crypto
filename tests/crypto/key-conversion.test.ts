@@ -1,7 +1,6 @@
-import { describe, expect, test } from '@jest/globals'
+// import { describe, expect, test } from '@jest/globals'
 import { EcdhConvertKey, EcdsaConvertKey } from '../../src/crypto/key-conversion'
 import { EcMakeCryptKeys, EcMakeSigKeys } from '../../src'
-import { initializeCrypto } from '../../src/crypto/init'
 
 describe('Key Conversion Operations', () => {
   describe('EcdhConvertKey', () => {
@@ -44,7 +43,7 @@ describe('Key Conversion Operations', () => {
     })
 
     test('should throw error for non-string non-CryptoKey input', async () => {
-      // @ts-ignore - Testing invalid input
+      // @ts-expect-error - Testing invalid input
       await expect(EcdhConvertKey(123)).rejects.toThrow('Invalid key format')
     })
 
@@ -91,7 +90,7 @@ describe('Key Conversion Operations', () => {
     })
 
     test('should throw error for non-string non-CryptoKey input', async () => {
-      // @ts-ignore - Testing invalid input
+      // @ts-expect-error - Testing invalid input
       await expect(EcdsaConvertKey(123)).rejects.toThrow('Invalid key format')
     })
 

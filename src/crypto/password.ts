@@ -10,7 +10,7 @@ export const PASSWORD_ENCRYPT = async (password: string, base64data: Base64Strin
 
   // 1. Strengthen the password through multiple rounds of hashing
   let strengthenedPassword = password
-  for (let i = 0; i < iterations; i++) {
+  for (let i = 0; i < iterations; i += 1) {
     strengthenedPassword = await HASH('SHA-512', strengthenedPassword)
   }
 
@@ -37,7 +37,7 @@ export const PASSWORD_DECRYPT = async (password: string, base64data: Base64Strin
 
   // 1. Strengthen the password the same way
   let strengthenedPassword = password
-  for (let i = 0; i < iterations; i++) {
+  for (let i = 0; i < iterations; i += 1) {
     strengthenedPassword = await HASH('SHA-512', strengthenedPassword)
   }
 

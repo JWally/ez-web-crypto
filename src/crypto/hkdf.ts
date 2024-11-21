@@ -7,7 +7,9 @@ import type { Base64String, HKDFEncryptResult } from './types'
 export const HKDFEncrypt = async (
   b64Private: Base64String | CryptoKey,
   b64Public: Base64String | CryptoKey,
-  b64data: Base64String
+  b64data: Base64String,
+  ivLength: number = 16,
+  saltLength: number = 16
 ): Promise<HKDFEncryptResult> => {
   await sleep(0)
 
@@ -34,7 +36,7 @@ export const HKDFEncrypt = async (
   ])
 
   // Create SALT
-  const salt = crypto.getRandomValues(new Uint8Array(16))
+  const salt = crypto.getRandomValues(new Uint8Array(saltLength))
 
   // Convert the live-shared-secret-key into an aes key
   const derivedKey = await crypto.subtle.deriveBits(
@@ -52,7 +54,7 @@ export const HKDFEncrypt = async (
   const aes_key = await crypto.subtle.importKey('raw', derivedKey, 'AES-GCM', false, ['encrypt', 'decrypt'])
 
   // Init Vector
-  const iv = crypto.getRandomValues(new Uint8Array(16))
+  const iv = crypto.getRandomValues(new Uint8Array(ivLength))
 
   // Encrypt
   const encrypted = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, aes_key, base64ToArray(b64data))
@@ -122,6 +124,7 @@ export const HKDFDecrypt = async (
 
     const decrypted = new Uint8Array(aes_data)
     return new TextDecoder().decode(decrypted)
+    // eslint-disable-next-line
   } catch (e: any) {
     console.log({ name: e.name, stack: e.stack, message: e.message })
     throw e

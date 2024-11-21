@@ -177,7 +177,7 @@ describe('HKDF Cryptographic Operations', () => {
 
       const keys = await EcMakeCryptKeys(true)
 
-      for (const testCase of testCases) {
+      testCases.forEach(async (testCase) => {
         const data = arrayToBase64(new TextEncoder().encode(testCase))
         const encrypted = await HKDFEncrypt(keys.privateKey as string, keys.publicKey, data)
         const decrypted = await HKDFDecrypt(
@@ -189,7 +189,7 @@ describe('HKDF Cryptographic Operations', () => {
           true
         )
         expect(decrypted).toBe(testCase)
-      }
+      })
     })
 
     test('should produce different ciphertexts for same data', async () => {
@@ -231,7 +231,6 @@ describe('HKDF Cryptographic Operations', () => {
 describe('Error Logging', () => {
   test('should log error details before rethrowing', async () => {
     const keys = await EcMakeCryptKeys(true)
-    const data = arrayToBase64(new TextEncoder().encode('test data'))
 
     // Mock console.log
     const consoleSpy = jest.spyOn(console, 'log')
@@ -267,7 +266,6 @@ describe('Error Logging', () => {
 
   test('should preserve original error properties when logging and rethrowing', async () => {
     const keys = await EcMakeCryptKeys(true)
-    const data = arrayToBase64(new TextEncoder().encode('test data'))
 
     const consoleSpy = jest.spyOn(console, 'log')
     consoleSpy.mockImplementation(() => {}) // Suppress actual console output in tests

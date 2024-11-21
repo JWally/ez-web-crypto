@@ -51,7 +51,7 @@ export const EcdhConvertKey = async (unknown_key: Base64String | CryptoKey): Pro
   } catch (e) {}
 
   try {
-    // Try RAW PUBLIC - PERVERTED
+    // Try RAW PUBLIC
     const longKey = new Uint8Array([4, ...Array.from(base64ToArray(unknown_key))])
     return await crypto.subtle.importKey('raw', longKey, { name: 'ECDH', namedCurve: 'P-256' }, true, [])
   } catch (e) {

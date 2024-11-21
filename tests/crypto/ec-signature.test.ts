@@ -1,7 +1,6 @@
 import { describe, expect, test } from '@jest/globals'
 import { EcMakeSigKeys, EcSignData, EcVerifySig } from '../../src/crypto/ec-signature'
 import { arrayToBase64 } from '../../src/crypto/utils'
-import type { ECSignatureKeyPair } from '../../src/crypto/types'
 
 describe('EC Signature Operations', () => {
   describe('EcMakeSigKeys', () => {
@@ -151,12 +150,12 @@ describe('EC Signature Operations', () => {
 
       const keys = await EcMakeSigKeys(true)
 
-      for (const testCase of testCases) {
+      testCases.forEach(async (testCase) => {
         const data = arrayToBase64(new TextEncoder().encode(testCase))
         const signature = await EcSignData(keys.privateKey as string, data)
         const isValid = await EcVerifySig(keys.publicKey, signature, data)
         expect(isValid).toBe(true)
-      }
+      })
     })
 
     test('should work with mixed key formats', async () => {
@@ -187,11 +186,11 @@ describe('EC Signature Operations', () => {
         { privKey: importedPrivateKey, pubKey: importedPublicKey },
       ]
 
-      for (const { privKey, pubKey } of testCases) {
+      testCases.forEach(async ({ privKey, pubKey }) => {
         const signature = await EcSignData(privKey, data)
         const isValid = await EcVerifySig(pubKey, signature, data)
         expect(isValid).toBe(true)
-      }
+      })
     })
   })
 })

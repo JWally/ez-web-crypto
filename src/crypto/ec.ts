@@ -72,7 +72,7 @@ export const EcEncrypt = async (
     ['encrypt', 'decrypt']
   )
 
-  return await AESEncrypt(aes_key, b64data)
+  return AESEncrypt(aes_key, b64data)
 }
 
 export const EcDecrypt = async (

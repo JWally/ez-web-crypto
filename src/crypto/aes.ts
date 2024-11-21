@@ -24,7 +24,7 @@ export const AESImportKey = async (
 ): Promise<CryptoKey> => {
   await sleep(0)
 
-  const { crypto, CryptoKey } = await initializeCrypto()
+  const { crypto } = await initializeCrypto()
 
   // Type guard for CryptoKey
   const isCryptoKey = (key: Base64String | CryptoKey): key is CryptoKey =>
@@ -34,10 +34,7 @@ export const AESImportKey = async (
     return aes_key
   }
 
-  return await crypto.subtle.importKey('raw', base64ToArray(aes_key).buffer, 'AES-GCM', exportable, [
-    'encrypt',
-    'decrypt',
-  ])
+  return crypto.subtle.importKey('raw', base64ToArray(aes_key).buffer, 'AES-GCM', exportable, ['encrypt', 'decrypt'])
 }
 
 export const AESEncrypt = async (

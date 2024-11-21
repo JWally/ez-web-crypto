@@ -53,7 +53,7 @@ export const EcVerifySig = async (
   const publicKey = await EcdsaConvertKey(b64PublicKey)
   const signature = base64ToArray(b64Signature)
 
-  return await crypto.subtle.verify(
+  return crypto.subtle.verify(
     { name: 'ECDSA', hash: { name: 'SHA-256' } },
     publicKey,
     signature,

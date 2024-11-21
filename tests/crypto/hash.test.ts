@@ -98,8 +98,8 @@ describe('Hash Functions', () => {
         const hashes = await Promise.all(algorithms.map((algo) => HASH(algo, data)))
 
         // Compare each hash with every other hash
-        for (let i = 0; i < hashes.length; i++) {
-          for (let j = i + 1; j < hashes.length; j++) {
+        for (let i = 0; i < hashes.length; i += 1) {
+          for (let j = i + 1; j < hashes.length; j += 1) {
             expect(hashes[i]).not.toBe(hashes[j])
           }
         }

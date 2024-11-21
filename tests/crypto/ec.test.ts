@@ -1,7 +1,6 @@
 import { describe, expect, test } from '@jest/globals'
 import { EcMakeCryptKeys, EcEncrypt, EcDecrypt } from '../../src/crypto/ec'
 import { arrayToBase64 } from '../../src/crypto/utils'
-import type { ECKeyPair } from '../../src/crypto/types'
 
 describe('EC Encryption Operations', () => {
   describe('EcMakeCryptKeys', () => {
@@ -162,7 +161,7 @@ describe('EC Encryption Operations', () => {
 
       const keys = await EcMakeCryptKeys(true)
 
-      for (const testCase of testCases) {
+      testCases.forEach(async (testCase) => {
         const data = arrayToBase64(new TextEncoder().encode(testCase))
         const encrypted = await EcEncrypt(keys.privateKey as string, keys.publicKey, data)
         const decrypted = await EcDecrypt(
@@ -173,7 +172,7 @@ describe('EC Encryption Operations', () => {
           true
         )
         expect(decrypted).toBe(testCase)
-      }
+      })
     })
 
     test('should work with different key pairs', async () => {

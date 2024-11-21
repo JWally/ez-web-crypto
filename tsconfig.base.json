@@ -23,6 +23,6 @@
     "moduleResolution": "node",
     "rootDir": "src"
   },
-  "include": ["src/**/*","tests/**/*"],
+  "include": ["src/**/*", "tests/**/*"],
   "exclude": ["node_modules", "cdk.out"]
 }
