@@ -55,20 +55,10 @@ const aliceKeys = await EcMakeCryptKeys()
 const bobKeys = await EcMakeCryptKeys()
 
 // Alice encrypts message for Bob
-const encrypted = await EcEncrypt(
-  aliceKeys.privateKey, 
-  bobKeys.publicKey, 
-  btoa('Secret message')
-)
+const encrypted = await EcEncrypt(aliceKeys.privateKey, bobKeys.publicKey, btoa('Secret message'))
 
 // Bob decrypts message from Alice
-const decrypted = await EcDecrypt(
-  bobKeys.privateKey,
-  aliceKeys.publicKey,
-  encrypted.iv,
-  encrypted.ciphertext,
-  true
-)
+const decrypted = await EcDecrypt(bobKeys.privateKey, aliceKeys.publicKey, encrypted.iv, encrypted.ciphertext, true)
 ```
 
 ### Digital Signatures (ECDSA)
@@ -83,11 +73,7 @@ const keys = await EcMakeSigKeys()
 const signature = await EcSignData(keys.privateKey, btoa('Sign this message'))
 
 // Verify signature
-const isValid = await EcVerifySig(
-  keys.publicKey,
-  signature,
-  btoa('Sign this message')
-)
+const isValid = await EcVerifySig(keys.publicKey, signature, btoa('Sign this message'))
 ```
 
 ### Password-Based Encryption
@@ -112,11 +98,7 @@ const aliceKeys = await EcMakeCryptKeys()
 const bobKeys = await EcMakeCryptKeys()
 
 // Encrypt using HKDF
-const encrypted = await HKDFEncrypt(
-  aliceKeys.privateKey,
-  bobKeys.publicKey,
-  btoa('Secret data')
-)
+const encrypted = await HKDFEncrypt(aliceKeys.privateKey, bobKeys.publicKey, btoa('Secret data'))
 
 // Decrypt using HKDF
 const decrypted = await HKDFDecrypt(
@@ -146,10 +128,12 @@ const hmac = await HMAC('secret-key', 'Message to authenticate')
 ### AES Operations
 
 - `AESMakeKey(exportable?: boolean): Promise<Base64String | CryptoKey>`
+
   - Generates a new AES-GCM key
   - `exportable`: Whether the key should be exportable (default: true)
 
 - `AESEncrypt(key: Base64String | CryptoKey, data: Base64String, nonce?: Base64String): Promise<AESEncryptResult>`
+
   - Encrypts data using AES-GCM
   - Returns ciphertext and IV
 
@@ -160,10 +144,12 @@ const hmac = await HMAC('secret-key', 'Message to authenticate')
 ### ECDH Operations
 
 - `EcMakeCryptKeys(exportable?: boolean): Promise<ECKeyPair>`
+
   - Generates ECDH key pair for encryption
   - Returns public/private keys in multiple formats
 
 - `EcEncrypt(privateKey: Base64String | CryptoKey, publicKey: Base64String | CryptoKey, data: Base64String): Promise<AESEncryptResult>`
+
   - Encrypts data using ECDH key exchange
   - Returns encrypted data and IV
 
@@ -174,10 +160,8 @@ const hmac = await HMAC('secret-key', 'Message to authenticate')
 
 - `EcMakeSigKeys(exportable?: boolean): Promise<ECSignatureKeyPair>`
   - Generates ECDSA signing key pair
-  
 - `EcSignData(privateKey: Base64String | CryptoKey, data: Base64String): Promise<Base64String>`
   - Signs data using ECDSA
-  
 - `EcVerifySig(publicKey: Base64String | CryptoKey, signature: Base64String, data: Base64String): Promise<boolean>`
   - Verifies ECDSA signature
 
@@ -185,7 +169,6 @@ const hmac = await HMAC('secret-key', 'Message to authenticate')
 
 - `HKDFEncrypt(privateKey: Base64String | CryptoKey, publicKey: Base64String | CryptoKey, data: Base64String, ivLength?: number, saltLength?: number): Promise<HKDFEncryptResult>`
   - Encrypts data using HKDF key derivation
-  
 - `HKDFDecrypt(privateKey: Base64String | CryptoKey, publicKey: Base64String | CryptoKey, salt: Base64String, iv: Base64String, data: Base64String, returnText?: boolean): Promise<string | ArrayBuffer>`
   - Decrypts HKDF encrypted data
 
@@ -193,7 +176,6 @@ const hmac = await HMAC('secret-key', 'Message to authenticate')
 
 - `PASSWORD_ENCRYPT(password: string, data: Base64String): Promise<Base64String>`
   - Encrypts data using password-based encryption
-  
 - `PASSWORD_DECRYPT(password: string, data: Base64String): Promise<string>`
   - Decrypts password-protected data
 
@@ -202,7 +184,6 @@ const hmac = await HMAC('secret-key', 'Message to authenticate')
 - `HASH(algorithm: HashAlgorithm, data: string, length?: number): Promise<Base64String>`
   - Generates cryptographic hash
   - Supports SHA-1, SHA-256, SHA-384, SHA-512
-  
 - `HMAC(secret: string, data: string): Promise<HexString>`
   - Generates HMAC using SHA-256
 
