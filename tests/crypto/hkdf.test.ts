@@ -27,6 +27,28 @@ describe('HKDF Cryptographic Operations', () => {
       expect(decrypted).toBe('test data')
     })
 
+    test('should encrypt and decrypt with base64 keys and variable salt and iv lengths', async () => {
+      const keys = await EcMakeCryptKeys(true)
+      const data = arrayToBase64(new TextEncoder().encode('test data'))
+
+      const encrypted = await HKDFEncrypt(keys.privateKey as string, keys.publicKey, data, 12, 12)
+
+      expect(encrypted).toHaveProperty('ciphertext')
+      expect(encrypted).toHaveProperty('salt')
+      expect(encrypted).toHaveProperty('iv')
+
+      const decrypted = await HKDFDecrypt(
+        keys.privateKey as string,
+        keys.publicKey,
+        encrypted.salt,
+        encrypted.iv,
+        encrypted.ciphertext,
+        true
+      )
+
+      expect(decrypted).toBe('test data')
+    })
+
     test('should encrypt and decrypt with CryptoKey format', async () => {
       const keys = await EcMakeCryptKeys(false)
       const data = arrayToBase64(new TextEncoder().encode('test data'))
