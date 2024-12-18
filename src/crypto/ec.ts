@@ -57,12 +57,10 @@ export const EcEncrypt = async (
   b64Public: Base64String | CryptoKey,
   b64data: Base64String
 ): Promise<AESEncryptResult> => {
-  await sleep(0)
-
   const { crypto } = await initializeCrypto()
 
-  const publicKey = await EcdhConvertKey(b64Public)
-  const privateKey = await EcdhConvertKey(b64Private)
+  // Convert and cache keys if possible
+  const [publicKey, privateKey] = await Promise.all([EcdhConvertKey(b64Public), EcdhConvertKey(b64Private)])
 
   const aes_key = await crypto.subtle.deriveKey(
     { name: 'ECDH', public: publicKey },
@@ -72,7 +70,7 @@ export const EcEncrypt = async (
     ['encrypt', 'decrypt']
   )
 
-  return AESEncrypt(aes_key, b64data)
+  return AESEncrypt(aes_key, b64data) // Avoid double conversion
 }
 
 export const EcDecrypt = async (
@@ -82,27 +80,37 @@ export const EcDecrypt = async (
   b64data: Base64String,
   returnText: boolean = false
 ): Promise<string | ArrayBuffer> => {
-  const { crypto } = await initializeCrypto()
+  const { crypto } = await initializeCrypto();
 
-  const publicKey = await EcdhConvertKey(b64Public)
-  const privateKey = await EcdhConvertKey(b64Private)
-  const nonce = base64ToArray(b64Nonce)
-  const data = base64ToArray(b64data)
+  // Convert and cache keys in parallel
+  const [publicKey, privateKey] = await Promise.all([
+    EcdhConvertKey(b64Public),
+    EcdhConvertKey(b64Private),
+  ]);
 
-  const aes_key = await crypto.subtle.deriveKey(
+  // Base64 to ArrayBuffer conversions
+  const [nonce, data] = [base64ToArray(b64Nonce), base64ToArray(b64data)];
+
+  // Derive the shared AES key
+  const aesKey = await crypto.subtle.deriveKey(
     { name: 'ECDH', public: publicKey },
     privateKey,
     { name: 'AES-GCM', length: 256 },
     false,
-    ['encrypt', 'decrypt']
-  )
+    ['decrypt']
+  );
 
-  const decryptedData = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: nonce }, aes_key, data)
+  // Perform decryption
+  const decryptedData = await crypto.subtle.decrypt(
+    { name: 'AES-GCM', iv: nonce },
+    aesKey,
+    data
+  );
 
-  if (!returnText) {
-    return decryptedData
+  // Return result based on returnText flag
+  if (returnText) {
+    return new TextDecoder().decode(new Uint8Array(decryptedData));
   }
+  return decryptedData;
+};
 
-  const decrypted = new Uint8Array(decryptedData)
-  return new TextDecoder().decode(decrypted)
-}
