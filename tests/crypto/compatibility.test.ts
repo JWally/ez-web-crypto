@@ -22,6 +22,7 @@ import {
   EcSignData,
   EcVerifySig,
   HKDFDecrypt,
+  PASSWORD_ENCRYPT,
   PASSWORD_DECRYPT,
   arrayToBase64,
   base64ToArray,
@@ -284,6 +285,17 @@ describe('compatibility with the crypto.subtle implementation', () => {
   })
 
   describe('PASSWORD_ENCRYPT', () => {
+    test('our payload envelope is byte-identical to JSON.stringify', async () => {
+      // The hand-rolled serializer must match what the old code emitted, or existing blobs
+      // become undecryptable. Compare the decoded envelope, not the outer base64.
+      const encrypted = await PASSWORD_ENCRYPT('pw', b64(utf8('data')))
+      const envelope = new TextDecoder().decode(base64ToArray(encrypted))
+
+      const parsed = JSON.parse(envelope)
+      expect(Object.keys(parsed)).toEqual(['ciphertext', 'aes'])
+      expect(envelope).toBe(JSON.stringify({ ciphertext: parsed.ciphertext, aes: parsed.aes }))
+    })
+
     test('a payload from the old implementation still decrypts', async () => {
       // Replay the old algorithm exactly: 5,000 rounds of SHA-512 over the base64 digest,
       // btoa'd into an 88-byte GCM IV, wrapping a random AES key.

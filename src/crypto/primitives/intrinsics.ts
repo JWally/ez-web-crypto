@@ -8,18 +8,23 @@
  * steers nothing. The window is "before this module is evaluated" -- import the
  * library early.
  *
- * Deliberately absent: `crypto.subtle`, `btoa`/`atob`, `TextEncoder`/`TextDecoder`.
- * Those are implemented in JS under this directory rather than borrowed from the host.
+ * Deliberately absent: `crypto.subtle`, `btoa`/`atob`, `TextEncoder`/`TextDecoder`, and
+ * `JSON`. Those are implemented in JS under this directory rather than borrowed from the
+ * host -- `JSON` because the password payload carries the AES key, and stringify/parse
+ * are as hookable as everything else here.
  */
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 export const U8 = Uint8Array
 export const U32 = Uint32Array
+export const F64 = Float64Array
 
 const reflectApply = Reflect.apply
 const stringCharCodeAt = String.prototype.charCodeAt
 const stringFromCharCode = String.fromCharCode
+const stringSlice = String.prototype.slice
+const stringIndexOf = String.prototype.indexOf
 const arrayJoin = Array.prototype.join
 
 // Reused so the hot paths (base64/utf8 codecs) don't allocate an argument array per
@@ -36,6 +41,14 @@ export const fromCharCodes = (codes: number[]): string =>
 
 export const join = (parts: string[], separator: string): string =>
   reflectApply(arrayJoin, parts, [separator]) as unknown as string
+
+/** `String.prototype.slice`, snapshotted -- so parsing the key payload never touches a live method. */
+export const slice = (text: string, start: number, end: number): string =>
+  reflectApply(stringSlice, text, [start, end]) as unknown as string
+
+/** `String.prototype.indexOf`, snapshotted. Returns -1 when not found. */
+export const indexOf = (text: string, search: string, from: number): number =>
+  reflectApply(stringIndexOf, text, [search, from]) as unknown as number
 
 /** `crypto.getRandomValues`, pre-bound. The one host capability JS cannot replace. */
 const hostCrypto: Crypto | undefined = (globalThis as any).crypto
@@ -68,8 +81,5 @@ export const ambientNoise = (): number[] => [
 ]
 
 export const setTimeoutRef = globalThis.setTimeout
-
-export const jsonParse = JSON.parse
-export const jsonStringify = JSON.stringify
 
 export const alloc = (length: number): Uint8Array => new U8(length)

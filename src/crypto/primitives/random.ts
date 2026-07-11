@@ -18,7 +18,7 @@
 
 import { hmac } from './hmac'
 import { concat } from './sha'
-import { U8, alloc, getHostEntropy, ambientNoise, jsonStringify, charCodeAt } from './intrinsics'
+import { U8, F64, alloc, getHostEntropy, ambientNoise } from './intrinsics'
 
 const HASH = 'SHA-512' as const
 const OUTPUT_LENGTH = 64
@@ -55,12 +55,11 @@ const gatherEntropy = (): Uint8Array => {
 
   counter += 1
 
-  // A textual encoding of the noise is fine -- it all gets hashed into the state anyway.
-  const noise = jsonStringify([ambientNoise(), counter, calls])
-  const noiseBytes = alloc(noise.length)
-  for (let i = 0; i < noise.length; i += 1) {
-    noiseBytes[i] = charCodeAt(noise, i) & 0xff // eslint-disable-line no-bitwise
-  }
+  // Fold the ambient noise in through its raw IEEE-754 bytes rather than a textual
+  // encoding -- no serializer, no hookable string method, and it all gets hashed anyway.
+  const noise = ambientNoise()
+  const noiseFloats = new F64([noise[0], noise[1], noise[2], counter, calls])
+  const noiseBytes = new U8(noiseFloats.buffer)
 
   return concat(hostBytes, noiseBytes)
 }

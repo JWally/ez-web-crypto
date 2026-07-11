@@ -4,13 +4,42 @@ import { HASH } from './hash'
 import { sleep, base64ToArray } from './utils'
 import { encodeBase64, decodeBase64 } from './primitives/base64'
 import { encodeUtf8, decodeUtf8 } from './primitives/utf8'
-import { jsonParse, jsonStringify } from './primitives/intrinsics'
+import { join, indexOf, slice } from './primitives/intrinsics'
 
 const iterations = 5_000
 
 /** btoa/atob over an already-ASCII string, without reaching for btoa/atob. */
 const asciiToBase64 = (text: string): Base64String => encodeBase64(encodeUtf8(text))
 const base64ToAscii = (text: Base64String): string => decodeUtf8(decodeBase64(text))
+
+/**
+ * The password payload is a fixed two-field record of base64 strings, `{ ciphertext, aes }`,
+ * and `aes` is the AES key. We serialize and parse it by hand instead of through the global
+ * `JSON`, so the key never transits a hookable builtin.
+ *
+ * The output is byte-identical to `JSON.stringify({ ciphertext, aes })`: base64's alphabet
+ * contains no JSON metacharacters, so there is nothing to escape -- which keeps blobs written
+ * by every earlier version decryptable. Parsing locates each field by its `"key":"` marker
+ * and reads to the next quote (base64 can't contain one), so field order doesn't matter.
+ */
+const serializePayload = (ciphertext: Base64String, aes: Base64String): string =>
+  join(['{"ciphertext":"', ciphertext, '","aes":"', aes, '"}'], '')
+
+const readField = (text: string, key: string): Base64String => {
+  const marker = join(['"', key, '":"'], '')
+  const start = indexOf(text, marker, 0)
+  if (start === -1) {
+    throw new Error(`Malformed password payload: missing "${key}"`)
+  }
+
+  const from = start + marker.length
+  const end = indexOf(text, '"', from)
+  if (end === -1) {
+    throw new Error(`Malformed password payload: unterminated "${key}"`)
+  }
+
+  return slice(text, from, end)
+}
 
 export const PASSWORD_ENCRYPT = async (password: string, base64data: Base64String): Promise<Base64String> => {
   await sleep(0)
@@ -34,12 +63,7 @@ export const PASSWORD_ENCRYPT = async (password: string, base64data: Base64Strin
   const output = await AESEncrypt(aes, base64data, strengthenedPasswordHash)
 
   // 5. Bundle everything needed for decryption
-  return asciiToBase64(
-    jsonStringify({
-      ciphertext: output.ciphertext,
-      aes,
-    })
-  )
+  return asciiToBase64(serializePayload(output.ciphertext, aes))
 }
 
 export const PASSWORD_DECRYPT = async (password: string, base64data: Base64String): Promise<string> => {
@@ -55,11 +79,12 @@ export const PASSWORD_DECRYPT = async (password: string, base64data: Base64Strin
   const strengthenedPasswordHash = asciiToBase64(strengthenedPassword)
 
   // 3. Parse the encrypted data
-  const encryptedDataObject = jsonParse(base64ToAscii(base64data))
+  const payload = base64ToAscii(base64data)
+  const ciphertext = readField(payload, 'ciphertext')
 
   // 4. Import the AES key
-  const aes = await AESImportKey(encryptedDataObject.aes, false)
+  const aes = await AESImportKey(readField(payload, 'aes'), false)
 
   // 5. Decrypt using the same strengthened password as IV
-  return (await AESDecrypt(aes, strengthenedPasswordHash, encryptedDataObject.ciphertext, true)) as string
+  return (await AESDecrypt(aes, strengthenedPasswordHash, ciphertext, true)) as string
 }
