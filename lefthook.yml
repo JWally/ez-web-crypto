@@ -1,0 +1,29 @@
+# lefthook.yml
+# Git hooks for ez-web-crypto. `npm run prepare` installs them (runs on npm install).
+#
+# pre-commit is fast and scoped to staged files so it stays out of the way.
+# pre-push runs the full gate -- this is a crypto library, and a bad push is expensive.
+
+pre-commit:
+  parallel: true
+  commands:
+    lint:
+      glob: '*.ts'
+      run: npx eslint {staged_files} --max-warnings 0
+    format:
+      glob: '*.{ts,json,md,yml,yaml}'
+      run: npx prettier --check {staged_files}
+
+pre-push:
+  parallel: true
+  commands:
+    typecheck:
+      run: npm run typecheck
+    test:
+      run: npm test
+    dead-code:
+      run: npm run dead-code
+    duplication:
+      run: npm run duplication
+    size:
+      run: npm run size

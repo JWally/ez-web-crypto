@@ -2,29 +2,21 @@ import type { Base64String, ECSignatureKeyPair } from './types'
 
 import { EcdsaConvertKey } from './key-conversion'
 import { sleep, arrayToBase64, base64ToArray } from './utils'
-import { initializeCrypto } from './init'
+import { generateKeyPair, sign, verify } from './primitives/p256'
+import { encodeSpki, encodePkcs8 } from './primitives/der'
+import { EzCryptoKey, keyMaterial, makeEcPrivateKey, publicPointOf } from './key'
 
 export const EcMakeSigKeys = async (exportable: boolean = true): Promise<ECSignatureKeyPair> => {
   await sleep(0)
 
-  const { crypto } = await initializeCrypto()
-
-  const keys = await crypto.subtle.generateKey({ name: 'ECDSA', namedCurve: 'P-256' }, exportable, ['sign', 'verify'])
+  const { privateKey, publicKey } = generateKeyPair()
+  const spki = arrayToBase64(encodeSpki(publicKey))
 
   if (exportable) {
-    const b64Keys = await Promise.all([
-      crypto.subtle.exportKey('spki', keys.publicKey).then((key) => arrayToBase64(new Uint8Array(key))),
-      crypto.subtle.exportKey('pkcs8', keys.privateKey).then((key) => arrayToBase64(new Uint8Array(key))),
-    ])
-
-    return { publicKey: b64Keys[0], privateKey: b64Keys[1] }
+    return { publicKey: spki, privateKey: arrayToBase64(encodePkcs8(privateKey, publicKey)) }
   }
 
-  const b64Keys = await Promise.all([
-    crypto.subtle.exportKey('spki', keys.publicKey).then((key) => arrayToBase64(new Uint8Array(key))),
-  ])
-
-  return { publicKey: b64Keys[0], privateKey: keys.privateKey }
+  return { publicKey: spki, privateKey: makeEcPrivateKey('ECDSA', privateKey, false) }
 }
 
 export const EcSignData = async (
@@ -33,14 +25,13 @@ export const EcSignData = async (
 ): Promise<Base64String> => {
   await sleep(0)
 
-  const privateKey = await EcdsaConvertKey(b64PrivateKey)
-  const signature = await crypto.subtle.sign(
-    { name: 'ECDSA', hash: { name: 'SHA-256' } },
-    privateKey,
-    base64ToArray(b64data)
-  )
+  const privateKey = (await EcdsaConvertKey(b64PrivateKey)) as EzCryptoKey
+  if (privateKey.type !== 'private') {
+    throw new Error('EcSignData requires a private key')
+  }
 
-  return arrayToBase64(new Uint8Array(signature))
+  // Raw r||s, 64 bytes -- the same format crypto.subtle.sign emits for P-256.
+  return arrayToBase64(sign(keyMaterial(privateKey), base64ToArray(b64data)))
 }
 
 export const EcVerifySig = async (
@@ -50,13 +41,7 @@ export const EcVerifySig = async (
 ): Promise<boolean> => {
   await sleep(0)
 
-  const publicKey = await EcdsaConvertKey(b64PublicKey)
-  const signature = base64ToArray(b64Signature)
+  const publicKey = (await EcdsaConvertKey(b64PublicKey)) as EzCryptoKey
 
-  return crypto.subtle.verify(
-    { name: 'ECDSA', hash: { name: 'SHA-256' } },
-    publicKey,
-    signature,
-    base64ToArray(b64data)
-  )
+  return verify(publicPointOf(publicKey), base64ToArray(b64Signature), base64ToArray(b64data))
 }

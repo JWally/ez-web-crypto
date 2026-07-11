@@ -1,7 +1,7 @@
 {
   "name": "@justinwwolcott/ez-web-crypto",
-  "version": "4.2.0",
-  "description": "class for working with webcrypto in browser and node",
+  "version": "5.0.0",
+  "description": "Self-contained, type-safe crypto (AES-GCM, ECDH, ECDSA, HKDF, HMAC, SHA) for browser and node — pure-JS primitives, no crypto.subtle on the hot path",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -21,12 +21,17 @@
     "build:esm": "tsc -p tsconfig.esm.json",
     "build:cjs": "tsc -p tsconfig.cjs.json",
     "test": "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "prepare": "lefthook install || true",
     "prepublishOnly": "npm run build",
     "lint": "eslint . --ext .ts",
-    "typecheck": "tsc --noEmit",
     "lint:fix": "npx eslint --fix .",
+    "typecheck": "tsc --noEmit",
     "prettier:check": "npx prettier --check .",
     "prettier:fix": "npx prettier --write .",
+    "dead-code": "knip",
+    "duplication": "jscpd src",
+    "size": "npm run build && size-limit",
+    "quality": "npm run lint && npm run typecheck && npm run dead-code && npm run duplication",
     "release": "np"
   },
   "repository": {
@@ -41,6 +46,47 @@
   "homepage": "https://github.com/JWally/ez-web-crypto#readme",
   "directories": {
     "test": "tests"
+  },
+  "size-limit": [
+    {
+      "name": "ESM (full library)",
+      "path": "dist/index.js",
+      "limit": "12 KB"
+    },
+    {
+      "name": "CJS (full library)",
+      "path": "dist/index.cjs",
+      "limit": "12 KB"
+    }
+  ],
+  "knip": {
+    "entry": [
+      "src/index.ts",
+      "tests/**/*.test.ts"
+    ],
+    "project": [
+      "src/**/*.ts"
+    ],
+    "ignoreDependencies": [
+      "@size-limit/preset-small-lib"
+    ]
+  },
+  "jscpd": {
+    "threshold": 3,
+    "reporters": [
+      "console"
+    ],
+    "absolute": true,
+    "gitignore": true,
+    "format": [
+      "typescript"
+    ],
+    "ignore": [
+      "**/*.test.ts",
+      "src/crypto/primitives/sha.ts"
+    ],
+    "minLines": 6,
+    "minTokens": 60
   },
   "files": [
     "dist",
@@ -59,6 +105,7 @@
   "devDependencies": {
     "@babel/preset-env": "^7.26.0",
     "@babel/preset-typescript": "^7.26.0",
+    "@size-limit/preset-small-lib": "^11.2.0",
     "@types/jest": "^29.5.14",
     "@types/node": "^20.0.0",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
@@ -70,11 +117,17 @@
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-jest": "^28.9.0",
     "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-promise": "^6.6.0",
+    "eslint-plugin-sonarjs": "^0.25.1",
+    "eslint-plugin-unicorn": "^48.0.1",
     "jest": "^29.7.0",
     "jest-junit": "^16.0.0",
+    "jscpd": "^4.2.5",
+    "knip": "^5.88.1",
+    "lefthook": "^1.13.6",
     "np": "^10.0.7",
     "prettier": "^3.3.3",
-    "ts-jest": "^29.2.5",
+    "size-limit": "^11.2.0",
     "tsup": "^8.3.5",
     "typescript": "^5.6.3"
   },

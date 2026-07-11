@@ -1,21 +1,25 @@
 // aes.ts
-import { initializeCrypto } from './init'
 import { arrayToBase64, base64ToArray, sleep } from './utils'
+import { gcmEncrypt, gcmDecrypt } from './primitives/aes'
+import { randomBytes } from './primitives/random'
+import { decodeUtf8 } from './primitives/utf8'
+import { toArrayBuffer } from './primitives/buffer'
+import { EzCryptoKey, adoptNativeKey, isCryptoKeyLike, isEzCryptoKey, keyMaterial, makeAesKey } from './key'
 import { Base64String, AESEncryptResult } from './types'
+
+const AES_KEY_BYTES = 32
+const NONCE_BYTES = 16
 
 export const AESMakeKey = async (exportable: boolean = true): Promise<Base64String | CryptoKey> => {
   await sleep(0)
 
-  const { crypto } = await initializeCrypto()
-
-  const key = await crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, exportable, ['encrypt', 'decrypt'])
+  const key = randomBytes(AES_KEY_BYTES)
 
   if (!exportable) {
-    return key
+    return makeAesKey(key, false)
   }
 
-  const out = await crypto.subtle.exportKey('raw', key)
-  return arrayToBase64(new Uint8Array(out))
+  return arrayToBase64(key)
 }
 
 export const AESImportKey = async (
@@ -24,18 +28,21 @@ export const AESImportKey = async (
 ): Promise<CryptoKey> => {
   await sleep(0)
 
-  const { crypto } = await initializeCrypto()
-
-  // Type guard for CryptoKey
-  const isCryptoKey = (key: Base64String | CryptoKey): key is CryptoKey =>
-    typeof key === 'object' && key !== null && 'type' in key && 'algorithm' in key
-
-  if (isCryptoKey(aes_key)) {
+  if (isEzCryptoKey(aes_key)) {
     return aes_key
   }
 
-  return crypto.subtle.importKey('raw', base64ToArray(aes_key).buffer, 'AES-GCM', exportable, ['encrypt', 'decrypt'])
+  if (isCryptoKeyLike(aes_key)) {
+    // A key from the platform's WebCrypto: lift it into JS once, then never touch subtle again.
+    return adoptNativeKey(aes_key, 'AES-GCM')
+  }
+
+  return makeAesKey(base64ToArray(aes_key), exportable)
 }
+
+/** Both directions need the key as raw bytes; this is the single funnel for that. */
+const rawKeyOf = async (key: Base64String | CryptoKey): Promise<Uint8Array> =>
+  keyMaterial((await AESImportKey(key)) as EzCryptoKey)
 
 export const AESEncrypt = async (
   base_64_key: Base64String | CryptoKey,
@@ -44,14 +51,13 @@ export const AESEncrypt = async (
 ): Promise<AESEncryptResult> => {
   await sleep(0)
 
-  const { crypto } = await initializeCrypto()
-  const aes_key = await AESImportKey(base_64_key)
-  const nonce = base_64_nonce ? base64ToArray(base_64_nonce) : crypto.getRandomValues(new Uint8Array(16))
+  const key = await rawKeyOf(base_64_key)
+  const nonce = base_64_nonce ? base64ToArray(base_64_nonce) : randomBytes(NONCE_BYTES)
 
-  const encrypted = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: nonce }, aes_key, base64ToArray(base_64_data))
+  const encrypted = gcmEncrypt(key, nonce, base64ToArray(base_64_data))
 
   return {
-    ciphertext: arrayToBase64(new Uint8Array(encrypted)),
+    ciphertext: arrayToBase64(encrypted),
     iv: arrayToBase64(nonce),
   }
 }
@@ -64,17 +70,12 @@ export const AESDecrypt = async (
 ): Promise<string | ArrayBuffer> => {
   await sleep(0)
 
-  const { crypto } = await initializeCrypto()
-  const aes_key = await AESImportKey(base_64_key)
-  const nonce_ary = base64ToArray(base_64_nonce)
-  const cipher_ary = base64ToArray(base_64_cipher)
-
-  const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: nonce_ary }, aes_key, cipher_ary)
+  const key = await rawKeyOf(base_64_key)
+  const decrypted = gcmDecrypt(key, base64ToArray(base_64_nonce), base64ToArray(base_64_cipher))
 
   if (!returnText) {
-    return decrypted
+    return toArrayBuffer(decrypted)
   }
 
-  const decryptedArray = new Uint8Array(decrypted)
-  return new TextDecoder().decode(decryptedArray)
+  return decodeUtf8(decrypted)
 }

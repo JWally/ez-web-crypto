@@ -6,7 +6,10 @@
 [![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
 [![Node.js Version](https://img.shields.io/node/v/@justinwwolcott/ez-web-crypto.svg)](https://nodejs.org/)
 
-A lightweight, type-safe wrapper around the Web Crypto API, providing easy-to-use cryptographic operations for both browser and Node.js environments.
+A lightweight, type-safe cryptography library for the browser and Node.js. The API mirrors
+the Web Crypto API's operations, but the primitives are implemented in self-contained
+JavaScript rather than delegated to `crypto.subtle` — see [Security Notes](#security-notes)
+for what that buys you and what it doesn't.
 
 ## Features
 
@@ -217,8 +220,8 @@ interface ECKeyPair {
 
 ## Environment Support
 
-- Node.js ≥ 14.0.0
-- Modern browsers with Web Crypto API support
+- Node.js ≥ 20.0.0
+- Modern browsers (only `crypto.getRandomValues` is required from the host)
 - Full TypeScript support included
 
 ## Contributing
@@ -233,10 +236,45 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## Security Notes
 
-- All cryptographic operations use standard Web Crypto API implementations
-- Keys can be handled in both exportable and non-exportable formats
-- Password-based encryption uses multiple rounds of hashing for key strengthening
-- All operations are async and type-safe
+### Self-contained cryptography
+
+As of v5, the cryptographic primitives are implemented in plain JavaScript rather than
+delegated to `crypto.subtle`. SHA-1/256/384/512, HMAC, HKDF, AES-GCM and P-256
+(ECDH + ECDSA), along with the base64 and UTF-8 codecs, all run in this library's own
+code. Every primitive is checked byte-for-byte against the platform's WebCrypto in the
+test suite (`tests/crypto/primitives.test.ts`), and ciphertext, keys and signatures remain
+fully interoperable with the previous WebCrypto-backed release
+(`tests/crypto/compatibility.test.ts`).
+
+**Why.** A wrapper over `crypto.subtle` routes every plaintext and key through globals that
+any earlier-loaded script can replace: `crypto.subtle`, `btoa`/`atob`, `TextEncoder`. Those
+hooks sit _below_ the wrapper, so the wrapper cannot detect or prevent them. Owning the
+implementation removes that surface — the library reads the platform intrinsics it needs
+(only `crypto.getRandomValues`, plus a few `String`/`Array` methods) **once, at module load**,
+through a private snapshot, so hooks installed afterwards see nothing and steer nothing.
+
+- Import this library early, before any untrusted script runs. The load-time snapshot is
+  what makes the guarantee; code that patches the globals _before_ this module is evaluated
+  is outside it.
+- Key material lives in a module-scoped `WeakMap`, never on the key object — it will not
+  surface in `JSON.stringify`, `Object.keys`, a console dump, or an error report.
+- Password-based encryption strengthens the password with 5,000 rounds of SHA-512 before use.
+
+### What this does not buy you
+
+- **`extractable: false` is weaker here than in WebCrypto.** A browser can hold a
+  non-extractable key's bytes outside the JS heap entirely; a JS library cannot. We promise
+  only that _we_ never hand the material back out. If you need keys the page genuinely cannot
+  reach, use WebCrypto directly, a Web Worker, or a hardware/enclave-backed store.
+- **The P-256 scalar multiplication is not constant-time.** JavaScript `BigInt` is not
+  constant-time in any current engine, so a timing-hardened ladder would be theatre. Treat
+  the curve code as safe for ephemeral, per-session keys; keep long-lived private keys off
+  untrusted clients.
+- **Entropy still comes from the host.** `crypto.getRandomValues` seeds an internal
+  HMAC-DRBG (captured at load time and mixed with ambient noise), but if that source is
+  already compromised when the module loads, nothing running in the page can repair it.
+- **Randomness aside, this is not audited cryptography.** It is a careful, spec-tested
+  implementation. For threat models that warrant it, get an independent review.
 
 ## License
 

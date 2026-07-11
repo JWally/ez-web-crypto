@@ -1,54 +1,74 @@
 import type { Base64String, ECKeyPair, AESEncryptResult } from './types'
 
-import { arrayToBase64, base64ToArray, sleep } from './utils'
-import { initializeCrypto } from './init'
-import { AESEncrypt } from './aes'
-
+import { arrayToBase64, sleep } from './utils'
+import { AESEncrypt, AESDecrypt } from './aes'
+import { generateKeyPair, deriveSharedSecret } from './primitives/p256'
+import { encodeSpki, encodePkcs8 } from './primitives/der'
+import { encodeBase64Url } from './primitives/base64'
 import { EcdhConvertKey } from './key-conversion'
+import { EzCryptoKey, keyMaterial, makeAesKey, makeEcPrivateKey, publicPointOf } from './key'
+
+/**
+ * The ECDH -> AES-GCM key derivation is deliberately *not* an HKDF: WebCrypto's
+ * `deriveKey({name:'ECDH'}, ..., {name:'AES-GCM', length: 256})` takes the raw 256-bit
+ * X coordinate of the shared point as the AES key, and matching that byte-for-byte is
+ * what keeps ciphertext written by earlier versions decryptable. (HKDFEncrypt is the
+ * function that runs a real KDF; use it for new designs.)
+ */
+const deriveAesKey = async (
+  b64Private: Base64String | CryptoKey,
+  b64Public: Base64String | CryptoKey
+): Promise<EzCryptoKey> => {
+  const [publicKey, privateKey] = await Promise.all([EcdhConvertKey(b64Public), EcdhConvertKey(b64Private)])
+
+  const shared = deriveSharedSecret(keyMaterial(privateKey as EzCryptoKey), publicPointOf(publicKey as EzCryptoKey))
+
+  return makeAesKey(shared, false)
+}
+
+const jwkFor = (point: Uint8Array, scalar?: Uint8Array): JsonWebKey => {
+  const jwk: JsonWebKey = {
+    crv: 'P-256',
+    ext: true,
+    key_ops: scalar ? ['deriveKey', 'deriveBits'] : [],
+    kty: 'EC',
+    x: encodeBase64Url(point.subarray(1, 33)),
+    y: encodeBase64Url(point.subarray(33, 65)),
+  }
+
+  if (scalar) {
+    jwk.d = encodeBase64Url(scalar)
+  }
+
+  return jwk
+}
 
 // ec.ts
 export const EcMakeCryptKeys = async (exportable: boolean = true): Promise<ECKeyPair> => {
   await sleep(0)
 
-  const { crypto } = await initializeCrypto()
+  const { privateKey, publicKey } = generateKeyPair()
 
-  const keys = await crypto.subtle.generateKey({ name: 'ECDH', namedCurve: 'P-256' }, exportable, [
-    'deriveKey',
-    'deriveBits',
-  ])
+  const spki = arrayToBase64(encodeSpki(publicKey))
+  const rawPublicKey = arrayToBase64(publicKey)
+  const rawPublicKeyLite = arrayToBase64(publicKey.subarray(1))
 
   if (!exportable) {
-    const exportKeys = await Promise.all([
-      crypto.subtle.exportKey('spki', keys.publicKey).then((key) => arrayToBase64(new Uint8Array(key))),
-      keys.privateKey,
-      crypto.subtle.exportKey('raw', keys.publicKey).then((key) => arrayToBase64(new Uint8Array(key))),
-      crypto.subtle.exportKey('raw', keys.publicKey).then((key) => arrayToBase64(new Uint8Array(key).slice(1, 1000))),
-    ])
-
     return {
-      publicKey: exportKeys[0],
-      privateKey: exportKeys[1],
-      rawPublicKey: exportKeys[2],
-      rawPublicKeyLite: exportKeys[3],
+      publicKey: spki,
+      privateKey: makeEcPrivateKey('ECDH', privateKey, false),
+      rawPublicKey,
+      rawPublicKeyLite,
     }
   }
 
-  const exportKeys = await Promise.all([
-    crypto.subtle.exportKey('spki', keys.publicKey).then((key) => arrayToBase64(new Uint8Array(key))),
-    crypto.subtle.exportKey('pkcs8', keys.privateKey).then((key) => arrayToBase64(new Uint8Array(key))),
-    crypto.subtle.exportKey('jwk', keys.publicKey),
-    crypto.subtle.exportKey('jwk', keys.privateKey),
-    crypto.subtle.exportKey('raw', keys.publicKey).then((key) => arrayToBase64(new Uint8Array(key))),
-    crypto.subtle.exportKey('raw', keys.publicKey).then((key) => arrayToBase64(new Uint8Array(key).slice(1, 1000))),
-  ])
-
   return {
-    publicKey: exportKeys[0],
-    privateKey: exportKeys[1],
-    jwkPublicKey: exportKeys[2],
-    jwkPrivateKey: exportKeys[3],
-    rawPublicKey: exportKeys[4],
-    rawPublicKeyLite: exportKeys[5],
+    publicKey: spki,
+    privateKey: arrayToBase64(encodePkcs8(privateKey, publicKey)),
+    jwkPublicKey: jwkFor(publicKey),
+    jwkPrivateKey: jwkFor(publicKey, privateKey),
+    rawPublicKey,
+    rawPublicKeyLite,
   }
 }
 
@@ -56,22 +76,7 @@ export const EcEncrypt = async (
   b64Private: Base64String | CryptoKey,
   b64Public: Base64String | CryptoKey,
   b64data: Base64String
-): Promise<AESEncryptResult> => {
-  const { crypto } = await initializeCrypto()
-
-  // Convert and cache keys if possible
-  const [publicKey, privateKey] = await Promise.all([EcdhConvertKey(b64Public), EcdhConvertKey(b64Private)])
-
-  const aes_key = await crypto.subtle.deriveKey(
-    { name: 'ECDH', public: publicKey },
-    privateKey,
-    { name: 'AES-GCM', length: 256 },
-    false,
-    ['encrypt', 'decrypt']
-  )
-
-  return AESEncrypt(aes_key, b64data) // Avoid double conversion
-}
+): Promise<AESEncryptResult> => AESEncrypt(await deriveAesKey(b64Private, b64Public), b64data)
 
 export const EcDecrypt = async (
   b64Private: Base64String | CryptoKey,
@@ -79,38 +84,4 @@ export const EcDecrypt = async (
   b64Nonce: Base64String,
   b64data: Base64String,
   returnText: boolean = false
-): Promise<string | ArrayBuffer> => {
-  const { crypto } = await initializeCrypto();
-
-  // Convert and cache keys in parallel
-  const [publicKey, privateKey] = await Promise.all([
-    EcdhConvertKey(b64Public),
-    EcdhConvertKey(b64Private),
-  ]);
-
-  // Base64 to ArrayBuffer conversions
-  const [nonce, data] = [base64ToArray(b64Nonce), base64ToArray(b64data)];
-
-  // Derive the shared AES key
-  const aesKey = await crypto.subtle.deriveKey(
-    { name: 'ECDH', public: publicKey },
-    privateKey,
-    { name: 'AES-GCM', length: 256 },
-    false,
-    ['decrypt']
-  );
-
-  // Perform decryption
-  const decryptedData = await crypto.subtle.decrypt(
-    { name: 'AES-GCM', iv: nonce },
-    aesKey,
-    data
-  );
-
-  // Return result based on returnText flag
-  if (returnText) {
-    return new TextDecoder().decode(new Uint8Array(decryptedData));
-  }
-  return decryptedData;
-};
-
+): Promise<string | ArrayBuffer> => AESDecrypt(await deriveAesKey(b64Private, b64Public), b64Nonce, b64data, returnText)

@@ -1,0 +1,15 @@
+{
+  // `npm run typecheck` runs a bare `tsc --noEmit`, which needs a tsconfig.json to find.
+  // Without this file it found none, printed its help text, and exited 0 -- so nothing was
+  // ever actually type-checked. The build configs keep rootDir: "src"; this one widens it
+  // to cover the tests as well.
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "rootDir": ".",
+    // The build configs only need "node"; the tests also lean on the jest globals, and
+    // key-conversion.test.ts leaves its `@jest/globals` import commented out.
+    "types": ["node", "jest"]
+  },
+  "include": ["src/**/*", "tests/**/*"]
+}
